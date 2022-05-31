@@ -21,7 +21,7 @@ Then the coordinates are converted in the SRS "NAD83 / MTM  zone 7" thanks to QG
 The final data are listed in the file "moules_nad.csv" in the directory "data/mussels".  
 
 
-##Step 2: Pre-processing
+## Step 2: Pre-processing
 
 ### Hackel features
 
@@ -60,7 +60,7 @@ With radius = 3m
 he file can be found in "data/plus_proche_voisin.csv"
 
 
-##Step 3: Merging the data
+## Step 3: Merging the data
 
 Using "merge.py" we merge the3 files genereted in the step 2.
 ```
