@@ -101,7 +101,7 @@ def dataframe_sort(df):
 
 
 if len(sys.argv) != 4:
-	sys.stderr.write("Usage: plus_proche_voisin.py moules_nad.csv mbes_file_no_header.xyz radius\n")
+	sys.stderr.write("Usage: plus_proche_voisin_linux.py moules_nad.csv mbes_file_no_header.xyz radius\n")
 	sys.exit(1)
 	
 radius = int(sys.argv[3])
