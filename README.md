@@ -53,7 +53,7 @@ If a point is near two mussels, only the nearest is considered.
 It should be noted that in the mussels data, the number of mussels listed at each point, varies from 0 to 269.  
 
 ```
-python src/plus_proche_voisin.py moules_nad.csv mbes_file_no_header.xyz radius  >> plus_proche_voisin.csv
+python src/plus_proche_voisin_linux.py moules_nad.csv mbes_file_no_header.xyz radius  >> plus_proche_voisin.csv
 ```
 With radius = 3m
 
