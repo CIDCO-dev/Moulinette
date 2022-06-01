@@ -13,37 +13,6 @@ import matplotlib.pyplot as plt
 import matplotlib.cm as cm 
 from matplotlib import colors
 
-result_file = 'C:\\Users\\Hydrograhe\\Documents\\GitHub\\Moulinette\\data\\trained_data.csv'
-
-result = pd.read_csv(result_file, delimiter = ';', header = 0)
-result = result.dropna()
- 
-# dic = {}
-   
-# for txt in pd.unique(result['Classe']):
-#     test1 = result.loc[result['Classe'] == txt]
-#     dic['classe de moules {}'.format(txt)] = len(test1)
-#     for i in range (int(max(result['GMM_Classe']))):
-
-#       test2 = test1.loc[result['GMM_Classe'] == i]
-#       #print(txt,': nbrs de moules ds la classe',i,':',len(test2))
-#       dic['nombre de points de classe {} parmis les zones de moules {}:'.format(i,txt)] =len(test2)
-      
-
-x = result['GMM_Classe'].values
-y= []
-for classe in result['New_Classe'] :
-   if classe == 'Inexistant' :
-      y.append(0)
-   elif classe == 'Rare':
-      y.append(1)
-   elif classe == 'Commun':
-      y.append(2)
-   else :
-      y.append(3)
-
-
-H, xedges, yedges = np.histogram2d(x, y, bins= [5,4], range=[[0, 5], [0, 4]])
 
 def histo_3d(x,y,H,xedges,yedges):
 
@@ -123,6 +92,7 @@ def flat_histo_3d(x,y,H):
    ax.set_zlabel('Nombres de moules', labelpad = 6)
    #ax.set_ylabel("Classe de moules", labelpad = 15)
    ax.set_xlabel("GMM Classe ", labelpad = 6)
+   ax.set_ylabel("")
    
    ax.set_title('Corrélation GMM/Habitats de moules', loc = 'center')
    #plt.set_zscale('log')
@@ -130,11 +100,13 @@ def flat_histo_3d(x,y,H):
    plt.savefig('flat_histo_3d.png',format = 'png', dpi = 300,bbox_inches='tight') #quality = 95 )
    
    
-def histo_2d(x,y):
+def histo_repartition_GMM(x):
     
-
+    plt.figure()
+    
     n, bins, patches = plt.hist(x, bins = [0,1,2,3,4,5], rwidth = 0.5, color = 'g', edgecolor = 'black')  
     plt.xticks([0.5,1.5,2.5,3.5,4.5],labels = ['0','1','2','3','4'])
+    #plt.xlim(0.25, max(x) + 1)
     plt.xlabel("Classe GMM")
     plt.ylabel("Nbrs de points mbes")
     plt.title("Histogramme de répartition des classes GMM")
@@ -145,11 +117,70 @@ def histo_2d(x,y):
     for c, p in zip(color_ratio, patches):
         plt.setp(p, 'facecolor', cmap(c))
     
-    plt.show()
-    
-    plt.savefig('GMM_repartition_histo.png',format = 'png', dpi = 300) #quality = 95 )
 
     
+    plt.savefig('GMM_repartition_histo.png',format = 'png', dpi = 300) #quality = 95 )
+    
+def histo_repartition_Moules(z):
+    
+    plt.figure()
+    
+    n, bins, patches = plt.hist(z,np.arange(max(z)+1), color = 'g', edgecolor = 'black')  
+    
+    plt.xticks(np.arange(110, step = 10))
+    #plt.xlim(0, max(z) + 1)
+    plt.xlabel("Nombres de moules")
+    plt.ylabel("Nbrs de points mbes")
+    plt.title("Histogramme de répartition des moules")
+    
+    
+    cmap = cm.get_cmap('RdYlBu_r')   # Get desired colormap
+    color_ratio = np.log(n)/np.log(np.max(n))
+    for c, p in zip(color_ratio, patches):
+        plt.setp(p, 'facecolor', cmap(c))
+    
+
+    
+    plt.savefig('Moules_repartition_histo.png',format = 'png', dpi = 300) #quality = 95 )
+
+
+################################################################################
+# Main                                                                         #
+################################################################################
+
+
+if len(sys.argv) != 2:
+	sys.stderr.write("Usage: histo.py training_data.txt(valid or not) \n")
+	sys.exit(1)
+	
+
+filename = sys.argv[1]
+
+#result_file = "C:\\Users\Hydrograhe\Documents\GitHub\Moulinette\data\\valid_training_data_5m.txt"
+
+df = pd.read_csv(filename, delimiter = '\s+', header = 0)
+
+#x = result['GMM_Classe'].values
+#y= []
+
+# for classe in result['New_Classe'] :
+#    if classe == 'Inexistant' :
+#       y.append(0)
+#    elif classe == 'Rare':
+#       y.append(1)
+#    elif classe == 'Commun':
+#       y.append(2)
+#    else :
+#       y.append(3)
+
+
+#H, xedges, yedges = np.histogram2d(x, y, bins= [5,4], range=[[0, 5], [0, 4]])
+
+
+z = df['Nbrs_moules'].values
+
+
 # flat_histo_3d(x,y,H)  
 # histo_3d(x,y,H,xedges,yedges)
-histo_2d(x,y)
+# histo_repartition_GMM(x)
+histo_repartition_Moules(z)
