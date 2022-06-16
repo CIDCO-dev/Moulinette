@@ -11,22 +11,15 @@ import scipy.spatial as sp
 
 
 
-def nearest_neighbors(Flag):
-   		
-   sys.stderr.write('Generation du kdTree\n')
-   
-   kdtree = sp.KDTree(mbes_dt[['X','Y']])
-   
-   sys.stderr.write("Recherche des points mbes a {}m ou moins d'une moule\n".format(radius))
+def nearest_neighbors(kdtree,moules_dt,mbes_dt,radius, mbes_file):
+
 		
    points = kdtree.query_ball_point(moules_dt[['X_moule','Y_moule']], r = radius)
    
    moules = points.nonzero()[0]  ##donne l'ensemble des moules qui ont des points a proximite
    
    if len(moules) == 0:
-      Flag = False
-      return(Flag, [])
-		
+       sys.exit("Aucun point du fichier {} ne se trouve a {}m ou moins d'une moule\n".format(mbes_file,radius))
    
 		
    dic = dict()
@@ -49,9 +42,9 @@ def nearest_neighbors(Flag):
 		
    df = df.rename_axis(index=["moules", "id"])	 
 		
-   return Flag,df
+   return df
 
-def remove_duplicate(df):
+def remove_duplicate(df,moules_dt):
       
      
      sys.stderr.write('Debut du data sorting\n')
@@ -89,57 +82,58 @@ def remove_duplicate(df):
      df = df.drop(ligne_a_suppr_3)
      df = df.reset_index()
      df['id_moules'] = df.pop('moules')
-     
+
      return df
    
 
 ################################################################################
 # Main                                                                         #
 ################################################################################
-
-
-if len(sys.argv) != 4:
-	sys.stderr.write("Usage: plus_proche_voisin_linux.py moules_nad.csv mbes_file_no_header.xyz radius \n")
-	sys.exit(1)
-	
-radius = int(sys.argv[3])
-labelfile= sys.argv[1]
-mbes_file = sys.argv[2]
-
-
-
-sys.stderr.write("Loading ground truthing from {} using a radius of {}m \n".format(labelfile,radius))
-
-
-moules_dt = pd.read_csv(labelfile, delimiter = ';', header = 0, names = ['Y_moule','X_moule','nbrs_moules'])
-moules_dt = moules_dt.dropna()
-moules_dt = moules_dt.reset_index(drop = True)
-
-
-              
-sys.stderr.write('Chargement du fichier {}\n'.format(mbes_file))
-
-mbes_dt = pd.read_csv(mbes_file, delimiter = '\s+', header = 0, names = ['X','Y','Z'])
-
-
-Flag = True
-
-Flag, df = nearest_neighbors(Flag)
-
-
-if Flag:
-   df = remove_duplicate(df)
-   
-   #sys.stderr.write("Enregistrement du fichier: .\\classification_{}.txt\n".format(hackelFile[:-7]))
-   # file = open(".\\classification_{}.txt".format(hackelFile[:-7]),"w")   
-   # df.to_csv(file, sep ='\t',header = True, index = True, line_terminator = '\n',float_format = '%.3f')		
-   # file.close()
-   sys.stderr.write("Enregistrement du fichier\n")
-   with pd.option_context('display.max_rows', None, 'display.max_columns', None,'display.width',None):  # more options can be specified also
-      print(df.to_string(index=False))
-
-   
-else:
-   sys.stderr.write("Aucun point du fichier {} ne se trouve a {}m ou moins d'une moule\n".format(mbes_file,radius))
-   
-        
+if __name__ == "__main__":
+    
+    if len(sys.argv) != 4:
+     	sys.stderr.write("Usage: plus_proche_voisin_linux.py moules_nad.csv mbes_file_no_header.xyz radius \n")
+     	sys.exit(1)
+    	
+    radius = int(sys.argv[3])
+    labelfile= sys.argv[1]
+    mbes_file = sys.argv[2]
+    
+    
+    
+    sys.stderr.write("Loading ground truthing from {} using a radius of {}m \n".format(labelfile,radius))
+    
+    
+    moules_dt = pd.read_csv(labelfile, delimiter = ';', header = 0, names = ['Y_moule','X_moule','nbrs_moules'])
+    moules_dt = moules_dt.dropna()
+    moules_dt = moules_dt.reset_index(drop = True)
+    
+    
+                  
+    sys.stderr.write('Chargement du fichier {}\n'.format(mbes_file))
+    
+    mbes_dt = pd.read_csv(mbes_file, delimiter = '\s+', header = 0, names = ['X','Y','Z'])
+    
+       		
+    sys.stderr.write('Generation du kdTree\n')
+    
+    kdtree = sp.KDTree(mbes_dt[['X','Y']])
+    
+    sys.stderr.write("Recherche des points mbes a {}m ou moins d'une moule\n".format(radius))
+    
+    
+    df = nearest_neighbors(kdtree,moules_dt,mbes_dt,radius, mbes_file)
+    
+    
+    df = remove_duplicate(df,moules_dt)
+    
+    #sys.stderr.write("Enregistrement du fichier: .\\classification_{}.txt\n".format(hackelFile[:-7]))
+    # file = open(".\\classification_{}.txt".format(hackelFile[:-7]),"w")   
+    # df.to_csv(file, sep ='\t',header = True, index = True, line_terminator = '\n',float_format = '%.3f')		
+    # file.close()
+    sys.stderr.write("Enregistrement du fichier\n")
+    with pd.option_context('display.max_rows', None, 'display.max_columns', None,'display.width',None):  # more options can be specified also
+        print(df.to_string(index=False))
+    
+       
+            

@@ -7,54 +7,86 @@ Created on Tue May 17 12:06:50 2022
 
 
 import pandas as pd
+from pandas.plotting import table
 import numpy as np
 import sys
+
+
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
+
 import matplotlib.cm as cm 
 from matplotlib import colors
+from scipy.spatial import ConvexHull
+from scipy.spatial.distance import cdist
 
 
-def histo_3d(x,y,H,xedges,yedges):
 
-   fig = plt.figure()
-   ax = fig.add_subplot(projection='3d')
-   
-   
-   # Construct arrays for the anchor positions of the 16 bars.
-   xpos, ypos = np.meshgrid(xedges[:-1] - 0.25, yedges[:-1] -0.25, indexing="ij")
-   xpos = xpos.ravel()
-   ypos = ypos.ravel()
-   zpos = 0
-   
-   # Construct arrays with the dimensions for the 16 bars.
-   dx = dy = 0.5 * np.ones_like(zpos)
-   dz = H.ravel()
-   
-   cmap = cm.get_cmap('jet')   # Get desired colormap
+def histo_3d(df,histo_dir,file_name):
+    x = df['GMM_Class'].values
+    y = df["Nbrs_Moules"].values
+    classes = np.unique(y)
+    H, xedges, yedges = np.histogram2d(x, y, bins= [5,len(classes)], range=[[0, 5], [0, max(classes)]])
+     
+    fig = plt.figure()
+    #ax = fig.add_subplot(121,projection='3d')
+    ax = fig.add_subplot(projection='3d')
+    
+    
+    # Construct arrays for the anchor positions of the 16 bars.
+    xpos, ypos = np.meshgrid(xedges[:-1] - 0.25, yedges[:-1] -0.25, indexing="ij")
+    xpos = xpos.ravel()
+    ypos = ypos.ravel()
+    zpos = 0
+    
+    # Construct arrays with the dimensions for the 16 bars.
+    dx = dy = 0.5 * np.ones_like(zpos)
+    dz = H.ravel()
+    
+    cmap = cm.get_cmap('RdYlBu_r')   # Get desired colormap
+    
+    log_rgba = cmap(np.log(dz)/np.log(np.max(dz)))
+        
+    rgba = cmap(dz/np.max(dz))
+    
+    #rgba = [colors.to_rgba('blue')] * 3 + [colors.to_rgba('green')] * 3 + [colors.to_rgba('yellow')] * 3 + [colors.to_rgba('orange')] * 3 + [colors.to_rgba('red')] * 3 
+    
+    
+    ax.bar3d(xpos, ypos, zpos, dx, dy, dz,color = rgba, alpha = 0.9)
+    # ax.set_yticks([0.5, 1.5,2.5,3.5])
+    # ax.set_yticklabels(['Inexistant (0 moules)', 'Rare (<= 3 moules)', 'Commun (<= 10 moules)','Abondant (>10 moules)'], horizontalalignment = 'left')
+    
+    # columns = np.arange(100)
+    # rows = [f'Classe {i}' for i in range(5)]
+    
+    # the_table = plt.table(cellText=H,
+    #                    rowLabels=rows,
+    #                    colLabels=columns,
+    #                    loc='bottom')
+    
+    ax.set_zlabel('Nombres de points mbes', labelpad = 6)
+    ax.set_ylabel("Nombres de moules", labelpad = 6)
+    ax.set_xlabel("GMM Classe", labelpad = 6)
+    
+    ax.set_title('Corrélation GMM/Habitats de moules', loc = 'right')
+    
+    #ax = fig.add_subplot(122)
+    # ax = plt.figure()
+    df = pd.DataFrame(data=H, columns =classes)
+    # table(ax, df, loc='bottom')
+      
 
-   #rgba = [cmap((k-min_height)/max_height) for k in dz] 
-   
-   rgba = cmap(np.log(dz)/np.log(np.max(dz)))
-   
-   #rgba = [colors.to_rgba('blue')] * 3 + [colors.to_rgba('green')] * 3 + [colors.to_rgba('yellow')] * 3 + [colors.to_rgba('orange')] * 3 + [colors.to_rgba('red')] * 3 
-   
-   
-   ax.bar3d(xpos, ypos, zpos, dx, dy, dz,color = rgba,norm=colors.LogNorm(), zsort='average')
-   ax.set_yticks([0.5, 1.5,2.5,3.5])
-   ax.set_yticklabels(['Inexistant (0 moules)', 'Rare (<= 3 moules)', 'Commun (<= 10 moules)','Abondant (>10 moules)'], horizontalalignment = 'left')
-   
-   
-   ax.set_zlabel('Nombres de points', labelpad = 6)
-   #ax.set_ylabel("Classe de moules", labelpad = 15)
-   ax.set_xlabel("GMM Classe", labelpad = 6)
-   
-   ax.set_title('Corrélation GMM/Habitats de moules', loc = 'right')
-   
-   plt.savefig('histo_3d.png',format = 'png',dpi = 300,bbox_inches='tight')
-   
+    plt.savefig('{}histo_3d_{}.png'.format(histo_dir,file_name),format = 'png',dpi = 300,bbox_inches='tight')
+    plt.close()
 
 
-def flat_histo_3d(x,y,H):
+def flat_histo_3d(df,histo_dir,file_name):
+   x = df['GMM_Class'].values
+   y = df["Nbrs_Moules"].values
+   classes = np.unique(y)
+   H, xedges, yedges = np.histogram2d(x, y, bins= [5,len(classes)], range=[[0, 5], [0, max(classes)]])
 
    fig = plt.figure()
    ax = fig.add_subplot(projection='3d')
@@ -73,7 +105,8 @@ def flat_histo_3d(x,y,H):
    
        #print(hauteur)
    
-       rgba = cmap(np.log(hauteur)/np.log(max_z))
+       log_rgba = cmap(np.log(hauteur)/np.log(max_z))
+       rgba = cmap(hauteur/max_z)
        #print(rgba)
        #cs = [colors[i]] * len(x)
    
@@ -86,21 +119,22 @@ def flat_histo_3d(x,y,H):
    ax.set_zlabel('Z')
    
    # On the y axis let's only label the discrete values that we have data for.
-   ax.set_yticks([0.5, 1.5,2.5,3.5])
-   ax.set_yticklabels(['Inexistant (0 moules)', 'Rare (<= 3 moules)', 'Commun (<= 10 moules)','Abondant (>10 moules)'], horizontalalignment = 'left')
+   # ax.set_yticks([0.5, 1.5,2.5,3.5])
+   # ax.set_yticklabels(['Inexistant (0 moules)', 'Rare (<= 3 moules)', 'Commun (<= 10 moules)','Abondant (>10 moules)'], horizontalalignment = 'left')
    
-   ax.set_zlabel('Nombres de moules', labelpad = 6)
-   #ax.set_ylabel("Classe de moules", labelpad = 15)
+   ax.set_zlabel('Nombres de points mbes', labelpad = 6)
+   ax.set_ylabel("Nombres de moules", labelpad = 6)
    ax.set_xlabel("GMM Classe ", labelpad = 6)
    ax.set_ylabel("")
    
    ax.set_title('Corrélation GMM/Habitats de moules', loc = 'center')
    #plt.set_zscale('log')
    
-   plt.savefig('flat_histo_3d.png',format = 'png', dpi = 300,bbox_inches='tight') #quality = 95 )
+   plt.savefig('{}flat_histo_3d_{}.png'.format(histo_dir,file_name),format = 'png', dpi = 300,bbox_inches='tight') #quality = 95 )
+   plt.close()
    
-   
-def histo_repartition_GMM(x):
+def histo_repartition_GMM(df,histo_dir,file_name):
+    x = df['GMM_Class'].values
     
     plt.figure()
     
@@ -119,18 +153,21 @@ def histo_repartition_GMM(x):
     
 
     
-    plt.savefig('GMM_repartition_histo.png',format = 'png', dpi = 300) #quality = 95 )
-    
-def histo_repartition_Moules(z):
+    plt.savefig("{}GMM_repartition_{}.png".format(histo_dir,file_name),format = 'png', dpi = 300) 
+    plt.close()
+def histo_repartition_Moules(df,histo_dir,file_name):
+    max_dist = find_max_dist_cloud(df)
     
     plt.figure()
+    
+    z = df['Nbrs_Moules'].values
     
     n, bins, patches = plt.hist(z,np.arange(max(z)+1), color = 'g', edgecolor = 'black')  
     
     plt.xticks(np.arange(110, step = 10))
     #plt.xlim(0, max(z) + 1)
     plt.xlabel("Nombres de moules")
-    plt.ylabel("Nbrs de points mbes")
+    plt.ylabel("Nbrs de points mbes à {}m ou moins".format(max_dist))
     plt.title("Histogramme de répartition des moules")
     
     
@@ -141,46 +178,69 @@ def histo_repartition_Moules(z):
     
 
     
-    plt.savefig('Moules_repartition_histo.png',format = 'png', dpi = 300) #quality = 95 )
+    plt.savefig("{}Moules_repartition_{}.png".format(histo_dir,file_name),format = 'png', dpi = 300) 
+    plt.close()
+def find_max_dist_cloud(df):
+    length = np.bincount(df['id_moules'])   
+    id_moule = np.argmax(length)
+    df = df.loc[df['id_moules'] == id_moule]
+    if len(df) >= 3:
+        points = df[['X','Y']].values
+        hull = ConvexHull(points)
+        
+        # Extract the points forming the hull
+        hullpoints = points[hull.vertices,:]
+        
+        # Naive way of finding the best pair in O(H^2) time if H is number of points on
+        # hull
+        hdist = cdist(hullpoints, hullpoints, metric='euclidean')
+        
+    else :
+        hdist = 0
+    return int((np.max(hdist)+1)/2)
 
 
+            
+            
 ################################################################################
 # Main                                                                         #
 ################################################################################
 
-
-if len(sys.argv) != 2:
-	sys.stderr.write("Usage: histo.py training_data.txt(valid or not) \n")
-	sys.exit(1)
-	
-
-filename = sys.argv[1]
-
-#result_file = "C:\\Users\Hydrograhe\Documents\GitHub\Moulinette\data\\valid_training_data_5m.txt"
-
-df = pd.read_csv(filename, delimiter = '\s+', header = 0)
-
-#x = result['GMM_Classe'].values
-#y= []
-
-# for classe in result['New_Classe'] :
-#    if classe == 'Inexistant' :
-#       y.append(0)
-#    elif classe == 'Rare':
-#       y.append(1)
-#    elif classe == 'Commun':
-#       y.append(2)
-#    else :
-#       y.append(3)
-
-
-#H, xedges, yedges = np.histogram2d(x, y, bins= [5,4], range=[[0, 5], [0, 4]])
-
-
-z = df['Nbrs_moules'].values
-
-
-# flat_histo_3d(x,y,H)  
-# histo_3d(x,y,H,xedges,yedges)
-# histo_repartition_GMM(x)
-histo_repartition_Moules(z)
+if __name__ == "__main__":
+    # if len(sys.argv) != 2:
+    #  	sys.stderr.write("Usage: histo.py equalized_training_data.txt \n")
+    #  	sys.exit(1)
+     	
+    
+    # filename = sys.argv[1]
+    # #save_directory = sys.argv[2]
+    
+    # status = filename.split('_')[0]
+    
+    #filename = "C:\\Users\Hydrograhe\Documents\GitHub\Moulinette\data\\weight_75_equalized_training_data.txt"
+    filename = "C:\\Users\\Hydrograhe\\Documents\\GitHub\\Moulinette\\data\\training_data_r3m_freq88.txt"
+    histo_dir = "C:\\Users\\Hydrograhe\\Documents\\GitHub\\Moulinette\\histo\\"
+    file_name = filename.split('\\')[-1]
+    file_name = file_name.split('.')[0]
+    df = pd.read_csv(filename, delimiter = ',', header = 0, index_col = 0)
+    
+    max_dist = find_max_dist_cloud(df)
+    
+    #y= []
+    
+    # for classe in df['New_Classe'] :
+    #    if classe == 'Inexistant' :
+    #       y.append(0)
+    #    elif classe == 'Rare':
+    #       y.append(1)
+    #    elif classe == 'Commun':
+    #       y.append(2)
+    #    else :
+    #       y.append(3)
+    
+    
+    
+    #flat_histo_3d(df,histo_dir,file_name)  
+    histo_3d(df,histo_dir,file_name)
+    histo_repartition_GMM(df,histo_dir,file_name)
+    histo_repartition_Moules(df,histo_dir,file_name)
