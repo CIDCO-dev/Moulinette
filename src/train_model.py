@@ -28,10 +28,11 @@ from sklearn import metrics
 
 #trainingFile = sys.argv[1]
 
-trainingFile = "C:\\Users\Hydrograhe\Documents\GitHub\Moulinette\data\complete_training_data_1m_freq50.txt"
+trainingFile = "C:\\Users\\Hydrograhe\\Documents\\GitHub\\Moulinette\\data\\training_data_r3m_freq88.txt"
 
-df = pd.read_csv(trainingFile, delimiter = '\s+', header = 0)
-labels = df['GMM_Class']
+df = pd.read_csv(trainingFile, delimiter = ',', header = 0, index_col = 0)
+#labels = df['GMM_Class']
+labels = df['Nbrs_Moules']
 features = df[[f"H{i}"for i in range(1,17)]]
 
 #Preprocess labels
