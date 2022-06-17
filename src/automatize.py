@@ -4,19 +4,22 @@ Created on Tue Jun  7 16:43:27 2022
 
 @author: Hydrograhe
 """
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+
 import sys
 import pandas as pd
 import numpy as np
 import scipy.spatial as sp
 import ast
-import matplotlib
-matplotlib.use('Agg')
+
 
 
 import generate_pre_training_data
 import generate_training_data
 import remove_overrepresented
-import histo
+#import histo
 
 
 ################################################################################
@@ -40,30 +43,36 @@ moules_dt = pd.read_csv(labelfile, delimiter = ';', header = 0, names = ['Y_moul
 moules_dt = moules_dt.dropna()
 moules_dt = moules_dt.reset_index(drop = True)
 
-sys.stderr.write("Chargement fichier de Hackel\n")
-
+sys.stderr.write('\n')
+sys.stderr.write("Loading Hackel file\n")
 Hackel_dt = pd.read_csv(Hackel_file,delimiter = ',',header = None,nrows = None,
                         names = ['0','1','2','H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'H10', 'H11', 'H12', 'H13','H14','H15','H16'], 
                         usecols = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'H10', 'H11', 'H12', 'H13','H14','H15','H16'],
                         dtype = {'H1':np.float32,'H2':np.float32,'H3':np.float32,'H4':np.float32,'H5':np.float32,'H6':np.float32,'H7':np.float32,'H8':np.float32,'H9':np.float32,'H10':np.float32, 'H11':np.float32, 'H12':np.float32,'H13':np.float32,'H14':np.float32,'H15':np.float32,'H16':np.float32})
-sys.stderr.write("Fichier hackel chargé \n")
-sys.stderr.write("{}\n".format(Hackel_dt.info(verbose=False, memory_usage="deep")))
+sys.stderr.write("Hackel file loaded \n")
+#sys.stderr.write("{}\n".format(Hackel_dt.info(verbose=False, memory_usage="deep")))
+Hackel_dt.info(verbose=False, memory_usage="deep")
+sys.stderr.write('\n')
 
-sys.stderr.write('Chargement du fichier mbes\n')
+
+sys.stderr.write('Loading MBES file\n')
 mbes_dt = pd.read_csv(mbes_file, delimiter = '\s+', header = 0, names = ['X','Y','Z'], dtype = {'X': np.float32,'Y': np.float64,'Z':np.float16},nrows = None)
-sys.stderr.write("Fichier MBES chargé \n")
-sys.stderr.write("{}\n".format(mbes_dt.info(verbose=False, memory_usage="deep")))
+sys.stderr.write("MBES file loaded \n")
+mbes_dt.info(verbose=False, memory_usage="deep")
+sys.stderr.write('\n')
 
-sys.stderr.write('Chargement du fichier GMM\n')
+sys.stderr.write('Loading GMM file\n')
 GMM_dt = pd.read_csv(GMM_file, delimiter = '\s+', header = None, names = ['X','Y','Z','GMM_Class'], usecols= ["GMM_Class"], dtype = np.uint8,nrows = None)
-sys.stderr.write("Fichier GMM chargé \n")
-sys.stderr.write("{}\n".format(GMM_dt.info(verbose=False, memory_usage="deep")))
+sys.stderr.write("GMM file loaded \n")
+GMM_dt.info(verbose=False, memory_usage="deep")
+sys.stderr.write('\n')
 
 
-sys.stderr.write('Generation du kdTree\n')
+sys.stderr.write('Generating kdTree\n')
 kdtree = sp.KDTree(mbes_dt[['X','Y']])
-sys.stderr.write('kdTree généré\n')
+sys.stderr.write('kdTree genereted\n')
 sys.stderr.write("Size of kdtree: {}\n".format(sys.getsizeof(kdtree)))
+sys.stderr.write('\n')
 
 sys.stderr.write("Flag 1\n")
 
@@ -101,10 +110,10 @@ for key in dic:
     file = open("{}{}.csv".format(data_dir,key),"w")   
     df.to_csv(file, sep =',',header = True, index = True, line_terminator = '\n')		
     file.close()
-    sys.stderr.write('Generating histograms in {}\n'.format(histo_dir))
-    histo.histo_3d(df,histo_dir,key)
-    histo.histo_repartition_Moules(df,histo_dir,key)
-    histo.histo_repartition_GMM(df,histo_dir,key)
+    # sys.stderr.write('Generating histograms in {}\n'.format(histo_dir))
+    # histo.histo_3d(df,histo_dir,key)
+    # histo.histo_repartition_Moules(df,histo_dir,key)
+    # histo.histo_repartition_GMM(df,histo_dir,key)
     
     
         

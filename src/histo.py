@@ -5,22 +5,21 @@ Created on Tue May 17 12:06:50 2022
 @author: Hydrograhe
 """
 
-
-import pandas as pd
-from pandas.plotting import table
-import numpy as np
-import sys
-
-
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-
 
 import matplotlib.cm as cm 
 from matplotlib import colors
 from scipy.spatial import ConvexHull
 from scipy.spatial.distance import cdist
+
+import pandas as pd
+from pandas.plotting import table
+import numpy as np
+import sys
+import os
+
 
 
 
@@ -74,7 +73,7 @@ def histo_3d(df,histo_dir,file_name):
     
     #ax = fig.add_subplot(122)
     # ax = plt.figure()
-    df = pd.DataFrame(data=H, columns =classes)
+    #df = pd.DataFrame(data=H, columns =classes)
     # table(ax, df, loc='bottom')
       
 
@@ -167,7 +166,7 @@ def histo_repartition_Moules(df,histo_dir,file_name):
     plt.xticks(np.arange(110, step = 10))
     #plt.xlim(0, max(z) + 1)
     plt.xlabel("Nombres de moules")
-    plt.ylabel("Nbrs de points mbes à {}m ou moins".format(max_dist))
+    plt.ylabel( "Nbrs de points mbes à {}m ou moins".format(max_dist))
     plt.title("Histogramme de répartition des moules")
     
     
@@ -207,40 +206,50 @@ def find_max_dist_cloud(df):
 ################################################################################
 
 if __name__ == "__main__":
-    # if len(sys.argv) != 2:
-    #  	sys.stderr.write("Usage: histo.py equalized_training_data.txt \n")
-    #  	sys.exit(1)
+
+    if len(sys.argv) != 3:
+     	sys.stderr.write("Usage: histo.py   training_data_or_folder_with_training_data   save_directory \n")
+     	sys.exit(1)
      	
     
-    # filename = sys.argv[1]
-    # #save_directory = sys.argv[2]
+    filename = sys.argv[1]
+    save_directory = sys.argv[2]
     
-    # status = filename.split('_')[0]
+    if os.path.exists(filename):
+        
+        if os.path.isfile(filename):
+            file_list = [filename]
+        else :
+            file_list = os.listdir(filename)
+            #file_list = [os.path.abspath(filename + file) for file in file_list]
+            file_list = [filename + file for file in file_list]
+ 
+            
+    else :
+        sys.stderr.write("The entry data does not exist\n")
+
+    sys.stderr.write("{}\n".format(file_list))
+
     
-    #filename = "C:\\Users\Hydrograhe\Documents\GitHub\Moulinette\data\\weight_75_equalized_training_data.txt"
-    filename = "C:\\Users\\Hydrograhe\\Documents\\GitHub\\Moulinette\\data\\training_data_r3m_freq88.txt"
-    histo_dir = "C:\\Users\\Hydrograhe\\Documents\\GitHub\\Moulinette\\histo\\"
-    file_name = filename.split('\\')[-1]
-    file_name = file_name.split('.')[0]
-    df = pd.read_csv(filename, delimiter = ',', header = 0, index_col = 0)
+    for file in file_list :
+        #sys.stderr.write("{}\n".format(os.path.abspath(file)))
+        
+        file_name = file.split('\\')[-1]
+        file_name = file_name.split('.')[0]
+        
+        sys.stderr.write("Loading file : {} \n".format(file_name))
+        
+        
+        df = pd.read_csv(file, delimiter = ',', header = 0, index_col = 0)
     
-    max_dist = find_max_dist_cloud(df)
+        max_dist = find_max_dist_cloud(df)
+
     
-    #y= []
-    
-    # for classe in df['New_Classe'] :
-    #    if classe == 'Inexistant' :
-    #       y.append(0)
-    #    elif classe == 'Rare':
-    #       y.append(1)
-    #    elif classe == 'Commun':
-    #       y.append(2)
-    #    else :
-    #       y.append(3)
-    
-    
-    
-    #flat_histo_3d(df,histo_dir,file_name)  
-    histo_3d(df,histo_dir,file_name)
-    histo_repartition_GMM(df,histo_dir,file_name)
-    histo_repartition_Moules(df,histo_dir,file_name)
+        sys.stderr.write("Plotting histograms \n")
+        
+        #flat_histo_3d(df,histo_dir,file_name)  
+        histo_3d(df,save_directory,file_name)
+        histo_repartition_GMM(df,save_directory,file_name)
+        histo_repartition_Moules(df,save_directory,file_name)
+        
+

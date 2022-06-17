@@ -18,15 +18,15 @@ def merge(df,hackel_dt,GMM_dt):
 
 
 
-    sys.stderr.write("début merging \n")
+    sys.stderr.write("Start merging \n")
     merged_dt = pd.merge(GMM_dt,df,left_index=True,right_on = 'id', how="inner")
     merged_dt = pd.merge(hackel_dt,merged_dt,left_index=True,right_on = 'id', how="inner")
-    sys.stderr.write("fin merge \n")
-    sys.stderr.write("debut reagensement \n")
+    sys.stderr.write("Merging finished \n")
+    sys.stderr.write("Start ordering data \n")
     cols = ['id','X','Y','Z','id_moules','Nbrs_Moules', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'H10', 'H11', 'H12', 'H13','H14','H15','H16','GMM_Class']
     merged_dt = merged_dt[cols]
-    sys.stderr.write("fin reagensement \n")
-    sys.stderr.write("enregistrement result \n")
+    sys.stderr.write("Ordering finished \n")
+
 
     # merged_dt = merged_dt.reset_index(drop = True)
     # merged_dt = merged_dt.astype({"id_mbes": np.uint32, "id_moules": np.uint16, "Nbrs_moules": np.uint8, 'X':np.float32, 'Y':np.float32, 'Z':np.float32, 
@@ -55,9 +55,9 @@ if __name__ == "__main__":
     
     df = pd.read_csv(ppv, delimiter = '\s+', header = 0, names = ['id_mbes','X','Y','Z','Nbrs_moules','id_moules'])
     
-    sys.stderr.write("Chargement fichier de Hackel\n")
+    sys.stderr.write("Loading Hackel file\n")
     hackel_dt = pd.read_csv(Hackel_file,delimiter = ',',header = None,names = ['0','1','2','H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'H10', 'H11', 'H12', 'H13','H14','H15','H16'], usecols = ['H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'H7', 'H8', 'H9', 'H10', 'H11', 'H12', 'H13','H14','H15','H16'])
-    sys.stderr.write("Fichier hackel chargé \n")
+    sys.stderr.write("Hackel file loaded \n")
     
     merged_dt = merge(df,hackel_dt)
     

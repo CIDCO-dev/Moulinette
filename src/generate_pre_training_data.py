@@ -19,7 +19,7 @@ def nearest_neighbors(kdtree,moules_dt,mbes_dt,radius, mbes_file):
    moules = points.nonzero()[0]  ##donne l'ensemble des moules qui ont des points a proximite
    
    if len(moules) == 0:
-       sys.exit("Aucun point du fichier {} ne se trouve a {}m ou moins d'une moule\n".format(mbes_file,radius))
+       sys.exit("No point in the {} file is within {}m of a mussel.\n".format(mbes_file,radius))
    
 		
    dic = dict()
@@ -47,7 +47,7 @@ def nearest_neighbors(kdtree,moules_dt,mbes_dt,radius, mbes_file):
 def remove_duplicate(df,moules_dt):
       
      
-     sys.stderr.write('Debut du data sorting\n')
+     sys.stderr.write('Start data sorting\n')
      repetition = df.index.droplevel(0).duplicated(keep = False) 
      indice_des_doublons = np.where(repetition == True)[0]  ##donnent les indices des lignes de df pour lesquelles l'indice n est pas unique. i-e: ces points sont voisins de plusieurs moules
 
@@ -110,16 +110,16 @@ if __name__ == "__main__":
     
     
                   
-    sys.stderr.write('Chargement du fichier {}\n'.format(mbes_file))
+    sys.stderr.write('Loading MBES file {}\n'.format(mbes_file))
     
     mbes_dt = pd.read_csv(mbes_file, delimiter = '\s+', header = 0, names = ['X','Y','Z'])
     
        		
-    sys.stderr.write('Generation du kdTree\n')
+    sys.stderr.write('Generating  kdTree\n')
     
     kdtree = sp.KDTree(mbes_dt[['X','Y']])
     
-    sys.stderr.write("Recherche des points mbes a {}m ou moins d'une moule\n".format(radius))
+    sys.stderr.write("Search for points mbes a {}m or less of a mussel\n".format(radius))
     
     
     df = nearest_neighbors(kdtree,moules_dt,mbes_dt,radius, mbes_file)
@@ -131,7 +131,7 @@ if __name__ == "__main__":
     # file = open(".\\classification_{}.txt".format(hackelFile[:-7]),"w")   
     # df.to_csv(file, sep ='\t',header = True, index = True, line_terminator = '\n',float_format = '%.3f')		
     # file.close()
-    sys.stderr.write("Enregistrement du fichier\n")
+    sys.stderr.write("Saving file \n")
     with pd.option_context('display.max_rows', None, 'display.max_columns', None,'display.width',None):  # more options can be specified also
         print(df.to_string(index=False))
     
