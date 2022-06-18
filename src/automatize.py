@@ -110,7 +110,7 @@ for key in dic:
     file = open("{}{}.csv".format(data_dir,key),"w")   
     df.to_csv(file, sep =',',header = True, index = True, line_terminator = '\n')		
     file.close()
-    # sys.stderr.write('Generating histograms in {}\n'.format(histo_dir))
+    # sys.stderr.write('Generating histograms in {}\n'.format(histo_dir))   ##Does not work under linux
     # histo.histo_3d(df,histo_dir,key)
     # histo.histo_repartition_Moules(df,histo_dir,key)
     # histo.histo_repartition_GMM(df,histo_dir,key)
