@@ -35,35 +35,28 @@ if __name__ == "__main__":
      	sys.exit(1)
     
     foldername = sys.argv[1]
-    
-    
-    
-    
+
     if os.path.exists(foldername):
         tree_structure =  list(get_tree_structure(foldername).keys())
             
     else :
         sys.stderr.write("The entry data does not exist\n") 
 
-        
     for file in tree_structure :
         #sys.stderr.write("{}\n".format(os.path.abspath(file)))
         
         if sys.platform == "linux2":
             file_name = file.split("/")[-1]
-            folder_name = file.split("/")[-2]
+            
             
         else:
             file_name = file.split("\\")[-1]
-            folder_name = file.split("\\")[-2]
+            
 
+        folder_name = file.replace(foldername, "")
+        folder_name = folder_name.replace(file_name, "")
+        file_name = file_name.split('.')[0] #remove the extension of the file name
 
-        
-        #file_name = file_name.split('.')[0] #remove the extension of the file name
-        
-        
-        # sys.stderr.write("Loading file : {} \n".format(file_name))
-        # sys.stderr.write("Loading from folder : {} \n".format(folder_name))
         
         with open('{}'.format(file),'r') as f:
             line = f.readline()
@@ -77,15 +70,6 @@ if __name__ == "__main__":
                 
         else :
             dic[folder_name] = (file_name,accuracy)
-                
-
-# max_key = max(dic, key=dic.get)
-# print("\n Maximum accuracy: {} in file {} \n".format(dic[max_key],max_key))
-
-# with open('{}Metrics_of_{}.txt'.format(save_directory,file_name), mode='w') as file_object:
-#     for key in dic :
-#         file_name,accuracy = dic[key]
-#         file_object.write("\n {}: \n \t Maximum accuracy: {} in file {} \n".format(key,accuracy,file_name) + "\n")
 
 for key in dic :
     file_name,accuracy = dic[key]

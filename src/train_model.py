@@ -25,22 +25,45 @@ from sklearn.model_selection import train_test_split
 from sklearn import metrics
 
 
-def train_model(df):
+def train_model(df,Flag):
+    Nbrs = df['Nbrs_Moules']
+    #Stat = np.quantile(Nbrs,[0.2,0.4,0.6,0.8]).astype(np.uint8)
+    #Stat = np.quantile(Nbrs,[0.25,0.5,0.75]).astype(np.uint8)
+    #Flag = True
     
-    conditions = [
-    (df['Nbrs_Moules'] == 0),
-    (df['Nbrs_Moules'] > 0) & (df['Nbrs_Moules'] <= 3),
-    (df['Nbrs_Moules'] > 3) & (df['Nbrs_Moules'] <= 9),
-    (df['Nbrs_Moules'] > 9)
-    ]
+    # conditions = [
+    # (Nbrs <= Stat[0]),
+    # (Nbrs > Stat[0]) & (Nbrs <= Stat[1]),
+    # (Nbrs > Stat[1]) & (Nbrs <= Stat[2]),
+    # (Nbrs > Stat[2]) & (Nbrs <= Stat[3]),
+    # (Nbrs >  Stat[3])
+    # ]
+    
+    # conditions = [
+    # (Nbrs <= Stat[0]),
+    # (Nbrs > Stat[0]) & (Nbrs <= Stat[1]),
+    # (Nbrs > Stat[1]) & (Nbrs <= Stat[2]),
+    # (Nbrs >  Stat[2])
+    # ]
+    
+    conditions = [(Nbrs == 0 ),(Nbrs > 0)]
 
-    values = ['Innexistant', 'Rare', 'Commun', 'Abondant']
+    #values = ['Innexistant', 'Rare','Partiel', 'Commun', 'Abondant']
+    #values = [f'[0,{Stat[0]}]', f']{Stat[0]},{Stat[1]}]',f']{Stat[1]},{Stat[2]}]', f']{Stat[2]},{Stat[3]}]', f']{Stat[3]},{np.inf}[']
+    #values = [f'[0,{Stat[0]}]', f']{Stat[0]},{Stat[1]}]',f']{Stat[1]},{Stat[2]}]', f']{Stat[2]},{np.inf}]']
+    values = ['Innexistant', 'Existant']
+    #sys.stderr.write("{}".format(Stat))
+    
+    
+    
+    #labels = df['GMM_Class']
+    #labels = df['Nbrs_Moules']
     
     df['Mussels_Class'] = np.select(conditions, values)
+    labels =  df['Mussels_Class']
+
     
-    labels = df['GMM_Class']
-    #labels = df['Nbrs_Moules']
-    #labels =  df['Mussels_Class']
+    
     #features = df[[f"H{i}"for i in range(1,17)]] ##Does not work uner linux
     features = df[["H{}".format(i) for i in range(1,17)]]
     
@@ -84,7 +107,7 @@ def train_model(df):
     sys.stderr.write("\n")
 
 
-    return modelName,accuracy_score,report
+    return modelName,accuracy_score,report,Flag
  
 
 
@@ -94,7 +117,7 @@ def train_model(df):
 
 if __name__ == "__main__":
     
-    
+    Flag = False
         
     if len(sys.argv) != 3:
      	sys.stderr.write("Usage: train_model.py  training_data_or_folder_with_training_data   save_directory \n")
@@ -136,7 +159,21 @@ if __name__ == "__main__":
         df = pd.read_csv(file, delimiter = ',', header = 0, index_col = 0)
        
 
-        modelName,accuracy_score,report = train_model(df)
+        modelName,accuracy_score,report,Flag = train_model(df,Flag)
+        
+        if Flag:
+            file_name = np.array2string(Stat,separator = ',') + '_' + file_name  
+            
+        #     save_directory = os.path.join(save_directory, str(Stat))
+        #     os.makedirs(save_directory)
+            
+            # if sys.platform == 'linux2':
+            #     save_directory = save_directory + "/{}".format(values) 
+                    
+            # else :
+            #     save_directory = save_directory + "\\{}".format(values) 
+        
+        
         
         with open('{}Metrics_of_{}.txt'.format(save_directory,file_name), mode='w') as file_object:
 

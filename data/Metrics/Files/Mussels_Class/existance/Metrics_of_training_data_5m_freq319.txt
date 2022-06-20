@@ -1,0 +1,11 @@
+[*] GradientBoostingClassifier accuracy: 0.9268929503916449
+
+              precision    recall  f1-score   support
+
+           0       0.93      1.00      0.96       710
+           1       0.00      0.00      0.00        56
+
+    accuracy                           0.93       766
+   macro avg       0.46      0.50      0.48       766
+weighted avg       0.86      0.93      0.89       766
+
