@@ -45,7 +45,7 @@ lowest_bic = np.infty
 
 sys.stderr.write("[+] Finding optimal parameters...\n")
 n = 1
-while n < maxClusters :
+while n <= maxClusters :
     s = "progress: " + str(n) + "/" + str(maxClusters)
     sys.stderr.write(s+"\n")
     sys.stderr.write("calcul du model\n")
