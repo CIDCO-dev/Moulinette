@@ -51,13 +51,15 @@ if __name__ == "__main__":
         
         if sys.platform == "linux2":
             file_name = file.split("/")[-1]
+            folder_name = file.split("/")[-2]
             
         else:
             file_name = file.split("\\")[-1]
+            folder_name = file.split("\\")[-2]
 
 
-        folder_name = file.replace(file_name,"")
-        file_name = file_name.split('.')[0]
+        
+        #file_name = file_name.split('.')[0] #remove the extension of the file name
         
         
         # sys.stderr.write("Loading file : {} \n".format(file_name))
@@ -66,11 +68,25 @@ if __name__ == "__main__":
         with open('{}'.format(file),'r') as f:
             line = f.readline()
             accuracy = line.split(' ')[-1]
-            accuracy = accuracy.split('\n')[0]
+            accuracy = float(accuracy.split('\n')[0])
             
-            dic[file] = float(accuracy)
-            
+        if folder_name in dic.keys():
+        
+            if dic[folder_name][1] < accuracy :
+                dic[folder_name] = (file_name,accuracy)
+                
+        else :
+            dic[folder_name] = (file_name,accuracy)
+                
 
-max_key = max(dic, key=dic.get)
-print("\n Maximum accuracy: {} in file {} \n".format(dic[max_key],max_key))
+# max_key = max(dic, key=dic.get)
+# print("\n Maximum accuracy: {} in file {} \n".format(dic[max_key],max_key))
 
+# with open('{}Metrics_of_{}.txt'.format(save_directory,file_name), mode='w') as file_object:
+#     for key in dic :
+#         file_name,accuracy = dic[key]
+#         file_object.write("\n {}: \n \t Maximum accuracy: {} in file {} \n".format(key,accuracy,file_name) + "\n")
+
+for key in dic :
+    file_name,accuracy = dic[key]
+    print("\n {}: \n \t Maximum accuracy: {} in file {} \n".format(key,accuracy,file_name))
