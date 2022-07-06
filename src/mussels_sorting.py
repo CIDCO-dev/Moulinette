@@ -48,7 +48,7 @@ indice_des_doublons = np.where(repetition == True)[0]
 if len(indice_des_doublons) == 0:
      
    file = open(".\\sorted_moules.txt","w")   
-   df.to_csv(file, sep ='\t',header = True, index = True, line_terminator = '\n',float_format = '%.3f')		
+   df.to_csv(file, sep =',',header = True, index = True, line_terminator = '\n',float_format = '%.3f')		
    file.close()
 
 else: 

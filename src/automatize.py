@@ -39,7 +39,7 @@ data_dir = sys.argv[6]
 histo_dir = sys.argv[7]
 
 
-moules_dt = pd.read_csv(labelfile, delimiter = ';', header = 0, names = ['Y_moule','X_moule','nbrs_moules'], dtype = {'X_moule':np.float32,'Y_moule': np.float32,'nbrs_moules': np.uint16})
+moules_dt = pd.read_csv(labelfile, delimiter = ',', header = 0, names = ['Y_moule','X_moule','nbrs_moules'], dtype = {'X_moule':np.float32,'Y_moule': np.float32,'nbrs_moules': np.uint16})
 moules_dt = moules_dt.dropna()
 moules_dt = moules_dt.reset_index(drop = True)
 

@@ -104,7 +104,7 @@ if __name__ == "__main__":
     sys.stderr.write("Loading ground truthing from {} using a radius of {}m \n".format(labelfile,radius))
     
     
-    moules_dt = pd.read_csv(labelfile, delimiter = ';', header = 0, names = ['Y_moule','X_moule','nbrs_moules'])
+    moules_dt = pd.read_csv(labelfile, delimiter = ',', header = 0, names = ['Y_moule','X_moule','nbrs_moules'])
     moules_dt = moules_dt.dropna()
     moules_dt = moules_dt.reset_index(drop = True)
     
