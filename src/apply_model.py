@@ -89,7 +89,7 @@ for file in file_list :
         
         file = open("{}{}.csv".format(save_dir,file_name),"w")   
         #sys.stderr.write("saving file: {} \n".format(file))
-        df_2.to_csv(file, sep =',',header = True, index = True, line_terminator = '\n')
+        df_2.to_csv(file, sep =',',header = True, index = False, line_terminator = '\n')
     
     
     else:
