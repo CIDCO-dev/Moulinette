@@ -66,6 +66,8 @@ def train_model(df,Flag):
     
     #features = df[[f"H{i}"for i in range(1,17)]] ##Does not work uner linux
     features = df[["H{}".format(i) for i in range(1,17)]]
+    #features = df['GMM_Class']
+    
     
     #Preprocess labels
     labelEncoder = preprocessing.LabelEncoder()
@@ -89,8 +91,6 @@ def train_model(df,Flag):
        
     predictions = model.predict(featuresTest)
        
-    pickle.dump(model,open("trained.model","wb"))
-       
     report = metrics.classification_report(labelsTest, predictions,output_dict=False)
     
     accuracy_score = metrics.accuracy_score(labelsTest,predictions)
@@ -107,7 +107,7 @@ def train_model(df,Flag):
     sys.stderr.write("\n")
 
 
-    return modelName,accuracy_score,report,Flag
+    return model,modelName,accuracy_score,report,Flag
  
 
 
@@ -127,11 +127,13 @@ if __name__ == "__main__":
     
     filename = sys.argv[1]
     save_directory = sys.argv[2]
+    print(os.path.exists(filename))
     
     if os.path.exists(filename):
         
         if os.path.isfile(filename):
             file_list = [filename]
+            print('flag 1')
         else :
             file_list = os.listdir(filename)
             #file_list = [os.path.abspath(filename + file) for file in file_list]
@@ -159,10 +161,10 @@ if __name__ == "__main__":
         df = pd.read_csv(file, delimiter = ',', header = 0, index_col = 0)
        
 
-        modelName,accuracy_score,report,Flag = train_model(df,Flag)
+        model,modelName,accuracy_score,report,Flag = train_model(df,Flag)
         
-        if Flag:
-            file_name = np.array2string(Stat,separator = ',') + '_' + file_name  
+        # if Flag:
+        #     file_name = np.array2string(Stat,separator = ',') + '_' + file_name  
             
         #     save_directory = os.path.join(save_directory, str(Stat))
         #     os.makedirs(save_directory)
@@ -174,13 +176,15 @@ if __name__ == "__main__":
             #     save_directory = save_directory + "\\{}".format(values) 
         
         
+        pickle.dump(model,open("{}classification_trained_model_{}".format(save_directory,file_name),"wb"), protocol = 2)
         
-        with open('{}Metrics_of_{}.txt'.format(save_directory,file_name), mode='w') as file_object:
+        
+    #     with open('{}Metrics_of_{}.txt'.format(save_directory,file_name), mode='w') as file_object:
 
-            #print("[*] {} accuracy: {}\n".format(modelName,accuracy_score),"\n",report,"\n", file=file_object)  ##Does not work uner linux
+    #         #print("[*] {} accuracy: {}\n".format(modelName,accuracy_score),"\n",report,"\n", file=file_object)  ##Does not work uner linux
             
-            file_object.write("[*] {} accuracy: {}\n".format(modelName,accuracy_score) + "\n" + report + "\n")
+    #         file_object.write("[*] {} accuracy: {}\n".format(modelName,accuracy_score) + "\n" + report + "\n")
 
 
-    #filename = "C:\\Users\\Hydrograhe\\Documents\\GitHub\\Moulinette\\data\\dataset\\training_data_1m.csv"
+    # #filename = "C:\\Users\\Hydrograhe\\Documents\\GitHub\\Moulinette\\data\\dataset\\training_data_1m.csv"
     
