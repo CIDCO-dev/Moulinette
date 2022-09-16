@@ -2,7 +2,7 @@
 # Prep data
 ### remove useless columns, sort by date, remove date column, keep uniq rows only
 ```
-cut -d ";" -f 1,2,3,5 data/mussels/merge_of_raw_data.csv | sort -t";" -k4 -r | cut -d ";" -f 1-3 | uniq > mussels_epsg-4326.csv
+cut -d ";" -f 1,2,3,5 data/mussels/merge_of_raw_data.csv | sort -t";" -k4 -r | cut -d ";" -f 1-3 | sort -k1,1 -k2,2 --unique > mussels_epsg-4326.csv
 
 ```
 ### visualize that first 4 lines are not valid -> look at the date
