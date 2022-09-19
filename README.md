@@ -25,7 +25,7 @@ cut -d ";" -f 1-3 mussels_sorted_by_date_epsg-4326.csv | sort -k1,1 -k2,2 --uniq
 
 ### keep MBES points near mussels data
 ```
-python3 src/generate_trainning_data.py data/mussels/mussels_epsg-4326.csv data/test/cap-sample.hackel 1
+python3 src/generate_trainning_data.py data/mussels/mussels_epsg-4326.csv data/test/cap-sample.hackel 1 > trainingData_epsg-4326.txt
 ```
 
 

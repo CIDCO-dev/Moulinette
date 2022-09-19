@@ -53,10 +53,28 @@ with open(hackelFilePath) as f:
 		
 
 kdTree = sp.KDTree(groundTruthCoordinates)
-# indexes = kdTree.query_ball_point(xyPoints, r = radius)
 
+"""
 testPoint = groundTruthCoordinates[0]
 testPoint = [testPoint[0]+1, testPoint[1]+1]
 test = kdTree.query_ball_point(testPoint, r = 1)
 print(groundTruthCoordinates[0], groundTruthCoordinates[test[0]])
+"""
 
+for mbesPointID in range(len(xyPoints)):
+	indexes = kdTree.query_ball_point(xyPoints[mbesPointID], r = radius)
+	if len(indexes[mbesPointID]) >= 1:
+		for i in indexes:
+			sys.stdout.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(
+				xyPoints[mbesPointID][0], xyPoints[mbesPointID][1], depth[mbesPointID], features[mbesPointID][0],
+				features[mbesPointID][1],features[mbesPointID][2],features[mbesPointID][3],features[mbesPointID][4],
+				features[mbesPointID][5],features[mbesPointID][6],features[mbesPointID][7],features[mbesPointID][8],
+				features[mbesPointID][9],features[mbesPointID][10],features[mbesPointID][11],features[mbesPointID][12],
+				features[mbesPointID][13],features[mbesPointID][14],features[mbesPointID][15],features[mbesPointID][16],
+				groundTruthMussels[i]
+			))
+	else:
+		continue;
+
+		
+		
