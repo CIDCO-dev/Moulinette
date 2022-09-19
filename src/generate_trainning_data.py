@@ -13,24 +13,27 @@ radius = int(sys.argv[3])
 #csvDelimiter = sys.arv[4]
 
 # X Y nb_Moules
-groundTruth = []
-
+groundTruthCoordinates = []
+groundTruthMussels = []
 
 # Load groundTruth
 with open(groundTruthFilePath) as f:
-	reader = csv.reader(f, delimiter=" ")
+	reader = csv.reader(f, delimiter=";")
 	next(reader)
 	labeled_data = list(reader)
 	sys.stderr.write("[+] Loaded {} ground truth samples\n".format(len(labeled_data)))
 	
 	for line in labeled_data:
 		data = [ float(h) for h in line]
-		#print(data)
-		groundTruth.append(data)
+		#print(data[:2], data[2])
+		groundTruthCoordinates.append(data[:2])
+		groundTruthMussels.append(data[2])
+
 
 
 # X Y Z 16_hackel_feautres
-points = []
+xyPoints = []
+depth = []
 features = []
 
 
@@ -42,17 +45,18 @@ with open(hackelFilePath) as f:
 	
 	for line in hackel_data:
 		data = [ float(h) for h in line ]
-		points.append(data[:3])
+		xyPoints.append(data[:2])
+		depth.append(data[2])
 		features.append(data[3:])
-		#print(data[:3], data[3:])
+		#print(data[:2], data[2])
+		#print(data[3:])
 		
 
-kdTree = sp.KDTree(groundTruth)
-#trainingData = kdTree.query_ball_point(points[:2], r = radius)
-#trainingData = trainingData.nonzero()[0]
+kdTree = sp.KDTree(groundTruthCoordinates)
+# indexes = kdTree.query_ball_point(xyPoints, r = radius)
 
-#test = [75802, 5067873] # 75802.50288244258 5067873.774412379
-#trainingData = kdTree.query_ball_point(test, r = radius)
-
-#print(trainingData)
+testPoint = groundTruthCoordinates[0]
+testPoint = [testPoint[0]+1, testPoint[1]+1]
+test = kdTree.query_ball_point(testPoint, r = 1)
+print(groundTruthCoordinates[0], groundTruthCoordinates[test[0]])
 
