@@ -1,6 +1,6 @@
 # Moulinette
 Mussel prediction from MBES point cloud
-## Prep data
+## Prep ground truth data
 ### remove useless columns, sort by date
 ```
 cut -d ";" -f 1,2,3,5 data/mussels/merge_of_raw_data.csv | sort -t";" -k4 -r > mussels_sorted_by_date_epsg-4326.csv
@@ -20,6 +20,10 @@ sed -i '1,4d' mussels_sorted_by_date_epsg-4326.csv
 cut -d ";" -f 1-3 mussels_sorted_by_date_epsg-4326.csv | sort -k1,1 -k2,2 --unique > mussels_epsg-4326.csv
 ```
 
+## prep MBES data
+```
+python3 src/dms_to_dec.py data/test/cap-sample-epsg8452-dms.txt > data/test/cap-sample-epsg8452-decimal.txt
+```
 
 ## Generate Trainning data
 

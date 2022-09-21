@@ -26,7 +26,7 @@ with open(groundTruthFilePath) as f:
 	for line in labeled_data:
 		data = [ float(h) for h in line]
 		#print(data[:2], data[2])
-		groundTruthCoordinates.append(data[:2])
+		groundTruthCoordinates.append([data[1], data[0]])
 		groundTruthMussels.append(data[2])
 
 
@@ -66,7 +66,7 @@ for mbesPointID in range(len(xyPoints)):
 	if len(indexes[mbesPointID]) >= 1:
 		for i in indexes:
 			sys.stdout.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(
-				xyPoints[mbesPointID][0], xyPoints[mbesPointID][1], depth[mbesPointID], features[mbesPointID][0],
+				xyPoints[mbesPointID][0],xyPoints[mbesPointID][1], depth[mbesPointID], features[mbesPointID][0],
 				features[mbesPointID][1],features[mbesPointID][2],features[mbesPointID][3],features[mbesPointID][4],
 				features[mbesPointID][5],features[mbesPointID][6],features[mbesPointID][7],features[mbesPointID][8],
 				features[mbesPointID][9],features[mbesPointID][10],features[mbesPointID][11],features[mbesPointID][12],
