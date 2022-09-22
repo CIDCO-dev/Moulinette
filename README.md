@@ -20,16 +20,20 @@ sed -i '1,4d' mussels_sorted_by_date_epsg-4326.csv
 cut -d ";" -f 1-3 mussels_sorted_by_date_epsg-4326.csv | sort -k1,1 -k2,2 --unique > mussels_epsg-4326.csv
 ```
 
-## prep MBES data
+### prep MBES data
 ```
 python3 src/dms_to_dec.py data/test/cap-sample-epsg8452-dms.txt > data/test/cap-sample-epsg8452-decimal.txt
+```
+### generate hackel features
+```
+cat ~/Cap-Rouge_to_Lac-St-Pierre_epsg8254-decimal.txt | ./soundings_generate_features 10 > ~/Cap-Rouge_to_Lac-St-Pierre_epsg8254-decimal.hackel
 ```
 
 ## Generate Trainning data
 
 ### keep MBES points near mussels data
 ```
-python3 src/generate_trainning_data.py data/mussels/mussels_epsg-4326.csv data/test/cap-sample.hackel 1 > trainingData_epsg-4326.txt
+python3 src/generate_trainning_data.py data/mussels/mussels_epsg-4326.csv data/test/sample-mbes-epsg8254.hackel 10 > trainingData_epsg-4326.txt
 ```
 
 
