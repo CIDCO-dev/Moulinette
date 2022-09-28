@@ -31,9 +31,9 @@ cat ~/Cap-Rouge_to_Lac-St-Pierre_epsg8254-decimal.txt | ./soundings_generate_fea
 
 ## Generate Trainning data
 
-### keep MBES points near mussels data
+output xyz hackel_features musselGroundTruth gmmClass
 ```
-python3 src/generate_trainning_data.py data/mussels/mussels_epsg-4326.csv data/test/sample-mbes-epsg8254.hackel 10 > trainingData_epsg-4326.txt
+python3 generate_training_data.py ~/Documents/Cap-Rouge_to_Lac-St-Pierre_enu.hackel ../data/mussels/mussels_enu_centroid_46.5272_-72.0665_12.8192.txt 10
 ```
 
 
