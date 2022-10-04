@@ -18,7 +18,7 @@ groundTruthMussels = []
 
 # Load groundTruth
 with open(groundTruthFilePath) as f:
-	reader = csv.reader(f, delimiter=",")
+	reader = csv.reader(f, delimiter=" ")
 	next(reader)
 	labeled_data = list(reader)
 	sys.stderr.write("[+] Loaded {} ground truth samples\n".format(len(labeled_data)))
@@ -30,7 +30,7 @@ with open(groundTruthFilePath) as f:
 
 
 
-# X Y Z 16_hackel_feautres
+# X Y Z 16_hackel_feautres gmmClass
 hackelXY = []
 depth = []
 features = []
@@ -38,7 +38,7 @@ features = []
 
 # Load hackel file
 with open(hackelFilePath) as f:
-	reader = csv.reader(f, delimiter=" ")
+	reader = csv.reader(f, delimiter=",")
 	next(reader)
 	hackel_data = list(reader)
 	sys.stderr.write("[+] Loaded {} training samples\n".format(len(hackel_data)))
@@ -57,28 +57,12 @@ for hackelPointID in range(len(hackelXY)):
 	indexes = kdTree.query_ball_point(hackelXY[hackelPointID], r = radius)
 	if len(indexes) >= 1:
 		for i in indexes:
-			features[hackelPointID].append(groundTruthMussels[i])
-			trainData.append(features[hackelPointID])
+			sys.stdout.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(hackelXY[hackelPointID][0], hackelXY[hackelPointID][1]
+							 depth[hackelPointID], features[hackelPointID][0], features[hackelPointID][1], features[hackelPointID][2], features[hackelPointID][3], 
+							 features[hackelPointID][4], features[hackelPointID][5], features[hackelPointID][6], features[hackelPointID][7], 
+							 features[hackelPointID][8], features[hackelPointID][9], features[hackelPointID][10], features[hackelPointID][11], 
+							 features[hackelPointID][12], features[hackelPointID][13], features[hackelPointID][14], features[hackelPointID][15], 
+							 features[hackelPointID][16] 
+							))
 	else:
 		continue;
-#print(trainData)
-model = mixture.GaussianMixture(5, covariance_type = "full") 
-model.fit(trainData)
-predictions = model.predict(trainData)
-
-if len(predictions) == len(trainData):
-	sys.stderr.write("ok")
-else:
-	sys.stderr.write("predictions : {} != trainData : {}".format(len(predictions), len(trainData)))
-	sys.exit(1)
-
-for i in range(len(predictions)):
-	sys.stdout.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(
-				hackelXY[i][0],hackelXY[i][1], depth[i], trainData[i][0],
-				trainData[i][1],trainData[i][2],trainData[i][3],trainData[i][4],
-				trainData[i][5],trainData[i][6],trainData[i][7],trainData[i][8],
-				trainData[i][9],trainData[i][10],trainData[i][11],trainData[i][12],
-				trainData[i][13],trainData[i][14],trainData[i][15],trainData[i][16],predictions[i]))
-				
-
-
