@@ -20,14 +20,14 @@ if model:
 		reader = csv.reader(dataFile, delimiter=" ")
 		#next(reader)
 		data = list(reader)
-		print("[+] Loaded {} soundings".format(len(data)))
+		sys.stderr.write("[+] Loaded {} soundings".format(len(data)))
 
 		features = [x[:-1] for x in data]
 
-		classes = model.predict(features);
+		predictions = model.predict(features);
 
-		for i in range(0,len(classes)):
-			print("{},{},{},{}".format(data[i][0],data[i][1],data[i][2],classes[i]))
+		for i in range(0,len(predictions)):
+			sys.stdout.write("{} {} {} {}\n".format(data[i][0],data[i][1],data[i][2],predictions[i]))
 
 else:
 	sys.stderr.write("Couldn't load model\n")

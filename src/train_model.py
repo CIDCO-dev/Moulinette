@@ -48,7 +48,6 @@ params = {
     "max_depth": 4,
     "min_samples_split": 5,
     "learning_rate": 0.01,
-    "loss": "squared_error",
 }
 
 model = GradientBoostingRegressor(**params)
@@ -58,8 +57,7 @@ modelName = type(model).__name__
 param_distributions = {"max_depth": [2,4,6],
                        "min_samples_split": [2,4,6,8],
                        "n_estimators": [2,3,4,8],
-                       "learning_rate": [0.02, 0.01, 0.005, 0.002, 0.001],
-                       "loss": ["squared_error"]
+                       "learning_rate": [0.02, 0.01, 0.005, 0.002, 0.001]
                        }
 
 search = GridSearchCV(model, param_distributions,

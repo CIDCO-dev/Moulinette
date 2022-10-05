@@ -62,7 +62,7 @@ for hackelPointID in range(len(hackelXY)):
 							 features[hackelPointID][4], features[hackelPointID][5], features[hackelPointID][6], features[hackelPointID][7], 
 							 features[hackelPointID][8], features[hackelPointID][9], features[hackelPointID][10], features[hackelPointID][11], 
 							 features[hackelPointID][12], features[hackelPointID][13], features[hackelPointID][14], features[hackelPointID][15], 
-							 features[hackelPointID][16] 
+							 features[hackelPointID][16]
 							))
 	else:
 		continue;
