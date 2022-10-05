@@ -20,16 +20,19 @@ sed -i '1,4d' mussels_sorted_by_date_epsg-4326.csv
 cut -d ";" -f 1-3 mussels_sorted_by_date_epsg-4326.csv | sort -k1,1 -k2,2 --unique > mussels_epsg-4326.csv
 ```
 
-### prep MBES data
+## prep MBES data
+### convert MBES dms to decimal
 ```
 python3 src/dms_to_dec.py data/test/cap-sample-epsg8254-dms.txt > data/test/cap-sample-epsg8254-decimal.txt
 ```
 
-### put MBES data in same reference system -> ENU
+### put MBES and ground truth data in same reference system -> ENU
+```
+cat Cap-Rouge_to_Lac-St-Pierre_epsg-8254-decimal.txt | ./wgs2lgf enu > Cap-Rouge_to_Lac-St-Pierre_enu.txt
+```
 lat lon Z centroid :  46.527207203821909332 -72.066496911800527414 12.819235715989787394
 ```
-cat FILE1 | ./wgs2lgf enu > outFile.txt
-cat FILE2 | ./wgs2lgf_from_lat_lon_eh enu centroid_Lat centroid_Lon centroid_ellipsoidal_height > outFile.txt
+cat mussels_epsg-8254.txt | ./wgs2lgf_from_lat_lon_eh enu centroid_Lat centroid_Lon centroid_ellipsoidal_height > mussels_enu.txt
 ```
 
 ### generate hackel features
@@ -46,7 +49,7 @@ python3 gmm_best_fit.py ~/Cap-Rouge_to_Lac-St-Pierre_enu.hackel 6
 
 output xyz hackel_features gmmClass musselGroundTruth
 ```
-python3 generate_training_data.py ~/Documents/Cap-Rouge_to_Lac-St-Pierre_enu.hackel ../data/mussels/mussels_enu_centroid_46.5272_-72.0665_12.8192.txt 10
+python3 generate_training_data.py ~/Documents/Cap-Rouge_to_Lac-St-Pierre_enu.hackel ../data/mussels/mussels_enu_more_precision_centroid.txt 10
 ```
 
 
