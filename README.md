@@ -49,7 +49,7 @@ python3 gmm_best_fit.py ~/Cap-Rouge_to_Lac-St-Pierre_enu.hackel 6 > Cap-Rouge_to
 
 output xyz hackel_features gmmClass musselGroundTruth
 ```
-python3 generate_training_data.py ~/Cap-Rouge_to_Lac-St-Pierre_enu_gmm_hackel.txt ../data/mussels/mussels_enu_more_precision_centroid.txt 10 > training_data.txt
+python3 generate_training_data.py ../data/mussels/mussels_enu_more_precision_centroid.txt ~/Cap-Rouge_to_Lac-St-Pierre_enu_hackel_gmm.txt 10  > ~/training_data.txt
 ```
 
 ## 4) Optimize model parameter and train
@@ -68,9 +68,12 @@ python3 apply_model.py trained_mussel_regression.model FILE > xyzC.txt
 ```
 g++ -I /usr/include/eigen3 lgf2wgs.cpp -o lgf2wgs
 ```
-### put convert coordinates back to WGS84
+### convert coordinates back to WGS
 ```
-cat xyzC.txt | ./lgf2wgs enu lat lon eh > latLonEhClass.txt
+cat xyzC.txt | ./lgf2wgs enu 46.527207203821909332 -72.066496911800527414 12.819235715989787394 > xyzClass.txt
 ```
 
-### use gdal_grid to export a geotiff
+### Export result as geotiff
+```
+bash script/rasterize.bash xyzClass.txt ~/rasters
+```

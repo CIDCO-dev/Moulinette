@@ -19,7 +19,7 @@ groundTruthMussels = []
 # Load groundTruth
 with open(groundTruthFilePath) as f:
 	reader = csv.reader(f, delimiter=" ")
-	next(reader)
+	#next(reader)
 	labeled_data = list(reader)
 	sys.stderr.write("[+] Loaded {} ground truth samples\n".format(len(labeled_data)))
 	
@@ -38,8 +38,8 @@ features = []
 
 # Load hackel file
 with open(hackelFilePath) as f:
-	reader = csv.reader(f, delimiter=",")
-	next(reader)
+	reader = csv.reader(f, delimiter=" ")
+	#next(reader)
 	hackel_data = list(reader)
 	sys.stderr.write("[+] Loaded {} training samples\n".format(len(hackel_data)))
 	

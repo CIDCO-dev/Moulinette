@@ -101,13 +101,15 @@ int main(int argc, const char* argv[]) {
 	Eigen::MatrixXd ecefPoints = lgf2ecef * lgfPoints;
 	ecefPoints = ecefPoints.colwise() + centroid;
 	
-	CartesianToGeodeticFukushima ecef2wgs(2);
+	
+	CartesianToGeodeticFukushima ecef2wgs(5);
 	Eigen::Vector3d ecefPosition(0,0,0);
 	Position positionGeographic(0,0,0,0);
+
 	
 	std::cout.precision(20);
 	for(int i =0; i<ecefPoints.cols(); ++i){
-		
+	
 		ecefPosition[0] = ecefPoints(0, i);
 		ecefPosition[1] = ecefPoints(1, i);
 		ecefPosition[2] = ecefPoints(2, i);
@@ -117,8 +119,8 @@ int main(int argc, const char* argv[]) {
 		std::cout<< positionGeographic.getVector()(0) << "," << positionGeographic.getVector()(1) << "," << 
 					positionGeographic.getVector()(2) << "," << predictions.at(i) << std::endl;
 		
+		
 	}
-	
 	
 	
 	return 0;
