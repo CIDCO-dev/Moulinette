@@ -57,7 +57,7 @@ for hackelPointID in range(len(hackelXY)):
 	indexes = kdTree.query_ball_point(hackelXY[hackelPointID], r = radius)
 	if len(indexes) >= 1:
 		for i in indexes:
-			sys.stdout.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(hackelXY[hackelPointID][0], hackelXY[hackelPointID][1]
+			sys.stdout.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(hackelXY[hackelPointID][0], hackelXY[hackelPointID][1],
 							 depth[hackelPointID], features[hackelPointID][0], features[hackelPointID][1], features[hackelPointID][2], features[hackelPointID][3], 
 							 features[hackelPointID][4], features[hackelPointID][5], features[hackelPointID][6], features[hackelPointID][7], 
 							 features[hackelPointID][8], features[hackelPointID][9], features[hackelPointID][10], features[hackelPointID][11], 

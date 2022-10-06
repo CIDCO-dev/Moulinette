@@ -42,14 +42,14 @@ cat ~/Cap-Rouge_to_Lac-St-Pierre_enu.txt | ./soundings_generate_features 10 > ~/
 
 ### Unsupervised MBES classification
 ```
-python3 gmm_best_fit.py ~/Cap-Rouge_to_Lac-St-Pierre_enu.hackel 6
+python3 gmm_best_fit.py ~/Cap-Rouge_to_Lac-St-Pierre_enu.hackel 6 > Cap-Rouge_to_Lac-St-Pierre_enu_gmm_hackel.txt
 ```
 
 ## 3) Generate Trainning data
 
 output xyz hackel_features gmmClass musselGroundTruth
 ```
-python3 generate_training_data.py ~/Documents/Cap-Rouge_to_Lac-St-Pierre_enu.hackel ../data/mussels/mussels_enu_more_precision_centroid.txt 10 > training_data.txt
+python3 generate_training_data.py ~/Cap-Rouge_to_Lac-St-Pierre_enu_gmm_hackel.txt ../data/mussels/mussels_enu_more_precision_centroid.txt 10 > training_data.txt
 ```
 
 ## 4) Optimize model parameter and train
