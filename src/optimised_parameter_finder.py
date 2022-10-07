@@ -42,6 +42,7 @@ test_labels = np.asarray(labels[:200])
 train_labels = np.asarray(labels[200:])
 
 
+
 params = {
     "n_estimators": 500,
     "max_depth": 4,
@@ -51,7 +52,26 @@ params = {
 
 model = GradientBoostingRegressor(**params)
 modelName = type(model).__name__ 
+
+
+param_distributions = {"max_depth": [2,4,6],
+                       "min_samples_split": [2,4,6,8],
+                       "n_estimators": [2,3,4,8],
+                       "learning_rate": [0.02, 0.01, 0.005, 0.002, 0.001]
+                       }
+
+search = GridSearchCV(model, param_distributions,
+                                error_score='raise',
+                                n_jobs=-1,
+                                cv=5,
+								verbose=5).fit(train_features, train_labels)
+
+
+params = search.best_params_
+model = GradientBoostingRegressor(**params)
+
 model.fit(train_features,train_labels)
+
 
 sys.stderr.write("[+] Validating models...\n")
 
@@ -60,4 +80,6 @@ sys.stderr.write("The mean squared error (MSE) on test set: {:.4f}\n".format(mse
 
 #Save model
 pickle.dump(model,open("trained_mussel_regression.model","wb"))
+
+print(search.best_params_)
 

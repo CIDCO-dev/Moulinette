@@ -1,13 +1,14 @@
 #!/bin/bash
 
-if [[ $# -ne 1 ]]; then
-	echo "usage : bash rasterize.bash FILE.csv outputDirectory"
+if [[ $# -ne 3 ]]; then
+	echo "usage : bash rasterize.bash FILE.csv outputDirectory epsgCode"
 	exit 1
 fi
 
 
 FILENAME=$(basename "$1")
 outputPath=$2
+epsgCode=$3
 
 mkdir -p $outputPath
 
@@ -35,18 +36,18 @@ for interpolationAlgo in ${interpolations[@]}; do
 	if [[ "$interpolationAlgo" == "invdist" ]]; then
 		# default parameter
 		layerName="${FILENAME%.*}_${interpolationAlgo}"
-		echo gdal_grid -zfield "field_4" -a $interpolationAlgo -ot Float64 -l $layerName $VRT $layerName.tiff --config GDAL_NUM_THREADS ALL_CPUS
+		echo gdal_grid -zfield "field_4" -a_srs EPSG:$epsgCode -a $interpolationAlgo -ot Float64 -l $layerName $VRT $layerName.tiff --config GDAL_NUM_THREADS ALL_CPUS
 		for power in ${powers[@]}; do
 			# echo $power
 			for smoothing in ${smoothings[@]}; do
 				# custom parameter
 				layerName="${FILENAME%.*}_${interpolationAlgo}_p${power}_s${smoothing}"
-				echo gdal_grid -zfield "field_4" -a $interpolationAlgo:power=$power:smoothing=$smoothing -ot Float64 -l $layerName $VRT $layerName.tiff --config GDAL_NUM_THREADS ALL_CPUS
+				echo gdal_grid -zfield "field_4" -a_srs EPSG:$epsgCode -a $interpolationAlgo:power=$power:smoothing=$smoothing -ot Float64 -l $layerName $VRT $layerName.tiff --config GDAL_NUM_THREADS ALL_CPUS
 			done
 		done
 	else
 		layerName="${FILENAME%.*}_${interpolationAlgo}"
-		echo gdal_grid -zfield "field_4" -a $interpolationAlgo -ot Float64 -l $layerName $VRT $layerName.tiff --config GDAL_NUM_THREADS ALL_CPUS
+		echo gdal_grid -zfield "field_4" -a_srs EPSG:$epsgCode -a $interpolationAlgo -ot Float64 -l $layerName $VRT $layerName.tiff --config GDAL_NUM_THREADS ALL_CPUS
 	fi
 done
 

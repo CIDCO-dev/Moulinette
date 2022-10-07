@@ -2,22 +2,23 @@
 Mussel prediction from MBES point cloud
 ## 1) Prep ground truth data
 ### Remove useless columns, sort by date
+consider epsg 8254 to be equal to epsg 4326
 ```
-cut -d ";" -f 1,2,3,5 data/mussels/merge_of_raw_data.csv | sort -t";" -k4 -r > mussels_sorted_by_date_epsg-4326.csv
+cut -d ";" -f 1,2,3,5 data/mussels/merge_of_raw_data.csv | sort -t";" -k4 -r > mussels_sorted_by_date_epsg-8254.csv
 ```
 ### Visualize that first 4 lines are not valid -> look at the date
 ```
-cat mussels_sorted_by_date_epsg-4326.csv | sort -t";" -k4 -r | less
+cat mussels_sorted_by_date_epsg-8254.csv | sort -t";" -k4 -r | less
 ```
 
 ### Delete first 4 lines
 ```
-sed -i '1,4d' mussels_sorted_by_date_epsg-4326.csv
+sed -i '1,4d' mussels_sorted_by_date_epsg-8254.csv
 ```
 
 ### Keep latest unique data points
 ```
-cut -d ";" -f 1-3 mussels_sorted_by_date_epsg-4326.csv | sort -k1,1 -k2,2 --unique > mussels_epsg-4326.csv
+cut -d ";" -f 1-3 mussels_sorted_by_date_epsg-8254.csv | sort -k1,1 -k2,2 --unique > mussels_epsg-8254.csv
 ```
 
 ## 2) Prep MBES data
@@ -27,6 +28,7 @@ python3 src/dms_to_dec.py data/test/cap-sample-epsg8254-dms.txt > data/test/cap-
 ```
 
 ### Put MBES and ground truth data in same reference system -> ENU
+keep centroid value somewhere
 ```
 cat Cap-Rouge_to_Lac-St-Pierre_epsg-8254-decimal.txt | ./wgs2lgf enu > Cap-Rouge_to_Lac-St-Pierre_enu.txt
 ```
@@ -75,5 +77,5 @@ cat xyzC.txt | ./lgf2wgs enu 46.527207203821909332 -72.066496911800527414 12.819
 
 ### Export result as geotiff
 ```
-bash script/rasterize.bash xyzClass.txt ~/rasters
+bash script/rasterize.bash xyzClass.txt ~/rasters 4326
 ```
