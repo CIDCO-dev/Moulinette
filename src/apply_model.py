@@ -27,7 +27,7 @@ if model:
 		predictions = model.predict(features);
 
 		for i in range(0,len(predictions)):
-			sys.stdout.write("{} {} {} {}\n".format(data[i][0],data[i][1],data[i][2],predictions[i]))
+			sys.stdout.write("{} {} {} {}\n".format(data[i][0],data[i][1],data[i][2],round(predictions[i])))
 
 else:
 	sys.stderr.write("Couldn't load model\n")

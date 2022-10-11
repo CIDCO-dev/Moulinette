@@ -62,7 +62,7 @@ python3 train_model.py training_data.txt
 
 ## 5) Apply model
 ```
-python3 apply_model.py trained_mussel_regression.model FILE > xyzC.txt
+python3 apply_model.py trained_mussel_regression.model FILE > ~/result.xyzc
 ```
 
 ## 6) Rasterize result
@@ -72,10 +72,10 @@ g++ -I /usr/include/eigen3 lgf2wgs.cpp -o lgf2wgs
 ```
 ### convert coordinates back to WGS
 ```
-cat xyzC.txt | ./lgf2wgs enu 46.527207203821909332 -72.066496911800527414 12.819235715989787394 > xyzClass.txt
+cat ~/result.xyzc | ./lgf2wgs enu 46.527207203821909332 -72.066496911800527414 12.819235715989787394 > ~/lat_lon_eh_Class.csv
 ```
 
 ### Export result as geotiff
 ```
-bash script/rasterize.bash xyzClass.txt ~/rasters 4326
+bash script/rasterize.bash ~/lat_lon_eh_Class.csv ~/rasters 4326
 ```

@@ -117,7 +117,7 @@ int main(int argc, const char* argv[]) {
 		ecef2wgs.ecefToLongitudeLatitudeElevation(ecefPosition , positionGeographic);
 		
 		std::cout<< positionGeographic.getVector()(0) << "," << positionGeographic.getVector()(1) << "," << 
-					positionGeographic.getVector()(2) << "," << predictions.at(i) << std::endl;
+					predictions.at(i) << std::endl;
 		
 		
 	}
