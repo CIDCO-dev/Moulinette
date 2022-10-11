@@ -19,7 +19,7 @@ groundTruthMussels = []
 # Load groundTruth
 with open(groundTruthFilePath) as f:
 	reader = csv.reader(f, delimiter=" ")
-	#next(reader)
+	next(reader)
 	labeled_data = list(reader)
 	sys.stderr.write("[+] Loaded {} ground truth samples\n".format(len(labeled_data)))
 	
@@ -39,7 +39,7 @@ features = []
 # Load hackel file
 with open(hackelFilePath) as f:
 	reader = csv.reader(f, delimiter=" ")
-	#next(reader)
+	next(reader)
 	hackel_data = list(reader)
 	sys.stderr.write("[+] Loaded {} training samples\n".format(len(hackel_data)))
 	
@@ -52,17 +52,17 @@ with open(hackelFilePath) as f:
 
 kdTree = sp.KDTree(groundTruthCoordinates)
 
-trainData = []
+#trainData = []
 for hackelPointID in range(len(hackelXY)):
 	indexes = kdTree.query_ball_point(hackelXY[hackelPointID], r = radius)
 	if len(indexes) >= 1:
 		for i in indexes:
-			sys.stdout.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}".format(hackelXY[hackelPointID][0], hackelXY[hackelPointID][1],
+			sys.stdout.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}\n".format(hackelXY[hackelPointID][0], hackelXY[hackelPointID][1],
 							 depth[hackelPointID], features[hackelPointID][0], features[hackelPointID][1], features[hackelPointID][2], features[hackelPointID][3], 
 							 features[hackelPointID][4], features[hackelPointID][5], features[hackelPointID][6], features[hackelPointID][7], 
 							 features[hackelPointID][8], features[hackelPointID][9], features[hackelPointID][10], features[hackelPointID][11], 
 							 features[hackelPointID][12], features[hackelPointID][13], features[hackelPointID][14], features[hackelPointID][15], 
-							 features[hackelPointID][16]
+							 features[hackelPointID][16], groundTruthMussels[i]
 							))
 	else:
 		continue;

@@ -1,0 +1,3 @@
+[submodule "MBES-lib"]
+	path = MBES-lib
+	url = https://github.com/patcmorneau/MBES-lib.git

@@ -20,7 +20,7 @@ if model:
 		reader = csv.reader(dataFile, delimiter=" ")
 		#next(reader)
 		data = list(reader)
-		sys.stderr.write("[+] Loaded {} soundings".format(len(data)))
+		sys.stderr.write("[+] Loaded {} soundings\n".format(len(data)))
 
 		features = [x[:-1] for x in data]
 

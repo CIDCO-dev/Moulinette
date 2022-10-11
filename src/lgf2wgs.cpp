@@ -7,9 +7,9 @@
 #include <numeric>
 #include <string.h>
 #include <sstream>
-#include "../math/CoordinateTransform.hpp"
-#include "../math/CartesianToGeodeticFukushima.hpp"
-#include "../Position.hpp"
+#include "../MBES-lib/src/math/CoordinateTransform.hpp"
+#include "../MBES-lib/src/math/CartesianToGeodeticFukushima.hpp"
+#include "../MBES-lib/src/Position.hpp"
 
 
 int main(int argc, const char* argv[]) {
