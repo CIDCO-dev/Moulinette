@@ -25,7 +25,7 @@ with open(groundTruthFilePath) as f:
 	
 	for line in labeled_data:
 		data = [ float(h) for h in line]
-		groundTruthCoordinates.append([data[1], data[0]])
+		groundTruthCoordinates.append([data[0], data[1]])
 		groundTruthMussels.append(data[2])
 
 

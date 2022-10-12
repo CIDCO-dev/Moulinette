@@ -7,8 +7,8 @@
 #include <numeric>
 #include <string.h>
 #include <sstream>
-#include "../math/CoordinateTransform.hpp"
-#include "../Position.hpp"
+#include "../MBES-lib/src/math/CoordinateTransform.hpp"
+#include "../MBES-lib/src/Position.hpp"
 
 
 // compile in examples directory of mbes with command
@@ -31,19 +31,19 @@ int main(int argc, const char* argv[]) {
 		
 	double lon;
 	double lat;
-	double ellipsoidalHeight;
+	double groundTruth;
 	std::string line;
-	std::vector<double> lats, lons, ellipsoidalHeights;
+	std::vector<double> lats, lons, groundTruths;
 	
 	while ( std::getline( std::cin, line ) ) {
 		
 	    std::istringstream stream( line );
 
-	    if ( stream >> lat >> lon >> ellipsoidalHeight) { 
+	    if ( stream >> lat >> lon >> groundTruth) { 
 			try{
 				lats.push_back(lat);
 				lons.push_back(lon);
-				ellipsoidalHeights.push_back(ellipsoidalHeight);		
+				groundTruths.push_back(groundTruth);		
 				
 			}
 			catch(std::exception & e){
@@ -73,7 +73,7 @@ int main(int argc, const char* argv[]) {
 	
 	lats.clear();
 	lons.clear();
-	//ellipsoidalHeights.clear();
+	//groundTruths.clear();
 	
 	// Create ecef centroid vector
 	Eigen::Vector3d positionECEF(0,0,0);
@@ -104,7 +104,7 @@ int main(int argc, const char* argv[]) {
 	
 	std::cout.precision(20);
 	for(int i =0; i<lgfPoints.cols(); ++i){
-		std::cout<<lgfPoints(0, i)<<" "<<lgfPoints(1, i)<<" "<<ellipsoidalHeights.at(i)<< std::endl;
+		std::cout<<lgfPoints(0, i)<<" "<<lgfPoints(1, i)<<" "<<groundTruths.at(i)<< std::endl;
 	}
 	
 	
