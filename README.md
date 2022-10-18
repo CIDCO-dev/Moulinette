@@ -81,12 +81,22 @@ python3 apply_model.py trained_mussel_regression.model FILE > ~/result.xyzc
 ```
 g++ -I /usr/include/eigen3 lgf2wgs.cpp -o lgf2wgs
 ```
+
 ### convert coordinates back to WGS
 ```
 cat ~/result.xyzc | ./lgf2wgs enu 46.527207203821909332 -72.066496911800527414 12.819235715989787394 > ~/lat_lon_eh_Class.csv
 ```
 
+### get min max xy to change raster resolution
+```
+python3 find_min_max_coordinates.py ~/lat_lon_eh_Class.csv
+```
+
 ### Export result as geotiff
 ```
 bash script/rasterize.bash ~/lat_lon_eh_Class.csv ~/rasters 4326
+```
+or run a similar command like this
+```
+gdal_grid -zfield "field_3" -a_srs EPSG:4326 -a invdist -ot Float64 -l lat_lon_eh_Class script/lat_lon_eh_Class.vrt ~/raster_reso_1/mussel_resolution_1.tiff --config GDAL_NUM_THREADS ALL_CPUS -txe -72.6806747039285 -71.41272166174498 -tye 46.26391417288448 46.71285611583465 -tr 0.00001 0.00001
 ```

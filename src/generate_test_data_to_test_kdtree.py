@@ -17,7 +17,7 @@ groundTruthMussels = []
 # Load groundTruth
 with open(groundTruthFilePath) as f:
 	reader = csv.reader(f, delimiter=" ")
-	next(reader)
+	#next(reader)
 	labeled_data = list(reader)
 	sys.stderr.write("[+] Loaded {} ground truth samples\n".format(len(labeled_data)))
 	
@@ -26,9 +26,11 @@ with open(groundTruthFilePath) as f:
 		groundTruthCoordinates.append([data[0], data[1]])
 		groundTruthMussels.append(data[2])
 
+groundTruthCoordinates = sorted(groundTruthCoordinates, key=lambda k: [k[0], k[1]])
 
 for i in range(len(groundTruthCoordinates)):
-	sys.stdout.write("{} {} {}\n".format(groundTruthCoordinates[i][0]+9, groundTruthCoordinates[i][1]+9, groundTruthMussels[i]))
+	if i % 100 == 0:
+		sys.stdout.write("{} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {} {}\n".format(groundTruthCoordinates[i][0]+1, groundTruthCoordinates[i][1]+1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0))
 
 
 
