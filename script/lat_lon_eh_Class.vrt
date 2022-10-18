@@ -1,0 +1,7 @@
+<OGRVRTDataSource>
+    <OGRVRTLayer name="lat_lon_eh_Class">
+        <SrcDataSource>/home/pat/Documents/Moulinette/data/lat_lon_eh_Class.csv</SrcDataSource>
+        <GeometryType>wkbPoint</GeometryType>
+        <GeometryField encoding="PointFromColumns" x="field_2" y="field_1" z="field_3"/>
+    </OGRVRTLayer>
+</OGRVRTDataSource>

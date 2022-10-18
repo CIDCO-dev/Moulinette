@@ -1,84 +1,102 @@
 # Moulinette
-Prédiction des distributions de moules d'eau douce
-
-
-## Step 1: Selecting the data
-
-The project requires various data:
-
-### MBES data
-
-The multibeam data are stored in the server "indien" at the address "/home/oscar/moules/BenthicClassifier/data/mbes/Combine_secteur_Quebec_no_header.xyz".  
-The points are in the SRS "NAD83 / MTM  zone 7".
-
-### Mussels data
-
-Locations of mussels are listed in the 4 excel files in the directory "data/mussels/raw data".  
-The merge of those files was done manually and can be found in the file "listing_moules.csv" in the directory "data/mussels/raw data".   
-The points are in the SRS "WGS 84" (Lat/Long).  
-However, some rows have the same coordinates but different dates and different number of mussels. Those duplicates were treated with the code "mussels_sorting.py".   
-Then the coordinates are converted in the SRS "NAD83 / MTM  zone 7" thanks to QGIS.   
-The final data are listed in the file "moules_nad.csv" in the directory "data/mussels".  
-
-
-## Step 2: Pre-processing
-
-### Hackel features
-
-Based on the mbes data, we generate Hackel features and clean lines with NaN:
+Mussel prediction from MBES point cloud
+## 1) Prep ground truth data
+### Remove useless columns, sort by date
+consider epsg 8254 to be equal to epsg 4326
 ```
-cat mbes.xyz | soundings_generate_features radius >> outputfile.Hackel
-sed -i '/nan/d' "${WORKDIR}/WithFeatures/outputfile.Hackel"
+cut -d ";" -f 1,2,3,5 data/mussels/merge_of_raw_data.csv | sort -t";" -k4 -r > mussels_sorted_by_date_epsg-8254.csv
 ```
-With radius = 10m
-
-The Hackel file can be found on the server "indien" at the address "/home/oscar/moules/BenthicClassifier/data/hackel_features/Hackel_Features.Hackel"
-
-
-
-### Nearest neighbor search and selection of mbes data
-
-Using a kd-tree we select the mbes points within a given radius of the mussels points.  
-The points are labeled with the corresponding information (mussels_id + number of mussels).   
-If a point is near two mussels, only the nearest is considered.  
-It should be noted that in the mussels data, the number of mussels listed at each point, varies from 0 to 269.  
-
+### Visualize that first 4 lines are not valid -> look at the date
 ```
-python src/generate_pre_training_data.py moules_nad.csv mbes_file_no_header.xyz radius  >> pre_training_data.txt
+cat mussels_sorted_by_date_epsg-8254.csv | sort -t";" -k4 -r | less
 ```
 
-The file can be found in "data/pre_training_data.txt"
-
-
-## Step 3: Obtening the dataset.
-
-### Merging the pre-processing data
-
-
-Using "generate_training_data.py" we merge the files genereted in the step 2.
+### Delete first 4 lines
 ```
-python src/generate_training_data.py pre_training_data.txt hackel.Hackel  >> training_data.txt
+sed -i '1,4d' mussels_sorted_by_date_epsg-8254.csv
 ```
 
-The file can be found in "data/raining_data.txt"
-
-### Truncation of the training_data
-
-The distribution of the number of mussels being very variable, we need to truncate the over-represented number of mussels.
-
+### Keep latest unique data points
 ```
-python src/remove_overrepresented.py training_data.txt maximum_frequency_allowed >> valid_training_data.txt
-```
-In order to determine a suitable maximum_frequency_allowed, you can use the program "histo.py" (see below)
-
-### Visualisation of the distribution
-
-It should be noted that the distribution of the number of mussels and of others parameters can be viewed using the program "histo.py"
-
-
-```
-python src/histo.py training_data.txt 
+cut -d ";" -f 1-3 mussels_sorted_by_date_epsg-8254.csv | sort -k1,1 -k2,2 --unique > mussels_epsg-8254.csv
 ```
 
-The histograms are saved in the src directory.
+## 2) Prep MBES data
+### Convert MBES dms to decimal
+```
+python3 src/dms_to_dec.py data/test/cap-sample-epsg8254-dms.txt > data/test/cap-sample-epsg8254-decimal.txt
+```
 
+## 3) Put MBES and ground truth data in same reference system -> ENU
+### Compile 
+```
+cd MBES-lib
+mkdir build && cd build
+cmake ..
+make wgs2lgf
+```
+```
+g++ -I /usr/include/eigen3 src/wgs2lgf_from_lat_lon_eh.cpp -o wgs2lgf_from_lat_lon_eh
+```
+
+keep centroid values somewhere
+```
+cat Cap-Rouge_to_Lac-St-Pierre_epsg-8254-decimal.txt | ./MBES-lib/build/wgs2lgf enu > Cap-Rouge_to_Lac-St-Pierre_enu.txt
+```
+lat lon Z centroid :  46.527207203821909332 -72.066496911800527414 12.819235715989787394
+```
+cat mussels_epsg-8254.txt | ./wgs2lgf_from_lat_lon_groundruth enu centroid_Lat centroid_Lon centroid_ellipsoidal_height > mussels_enu.txt
+```
+
+### Generate hackel features
+```
+cat ~/Cap-Rouge_to_Lac-St-Pierre_enu.txt | ./soundings_generate_features 10 > ~/Cap-Rouge_to_Lac-St-Pierre_enu.hackel
+```
+
+### Unsupervised MBES classification
+```
+python3 gmm_best_fit.py ~/Cap-Rouge_to_Lac-St-Pierre_enu.hackel 6 > Cap-Rouge_to_Lac-St-Pierre_enu_gmm_hackel.txt
+```
+
+## 4) Generate Trainning data
+
+output xyz hackel_features gmmClass musselGroundTruth
+```
+python3 generate_training_data.py ../data/mussels/mussels_enu_more_precision_centroid.txt ~/Cap-Rouge_to_Lac-St-Pierre_enu_hackel_gmm.txt 10  > ~/training_data.txt
+```
+
+## 5) Optimize model parameter and train
+all cpu core will be use for parameter optimisation
+```
+python3 train_model.py training_data.txt
+```
+
+## 6) Apply model
+```
+python3 apply_model.py trained_mussel_regression.model FILE > ~/result.xyzc
+```
+
+## 7) Rasterize result
+### Compile utility
+```
+g++ -I /usr/include/eigen3 lgf2wgs.cpp -o lgf2wgs
+```
+
+### convert coordinates back to WGS
+```
+cat ~/result.xyzc | ./lgf2wgs enu 46.527207203821909332 -72.066496911800527414 12.819235715989787394 > ~/lat_lon_eh_Class.csv
+```
+
+### get min max xy to change raster resolution
+```
+python3 find_min_max_coordinates.py ~/lat_lon_eh_Class.csv
+```
+
+### Export result as geotiff
+```
+bash script/rasterize.bash ~/lat_lon_eh_Class.csv ~/rasters 4326
+```
+or run a similar command like this
+```
+gdal_grid -zfield "field_3" -a_srs EPSG:4326 -a invdist -ot Float64 -l lat_lon_eh_Class script/lat_lon_eh_Class.vrt ~/raster_reso_1/mussel_resolution_1.tiff --config GDAL_NUM_THREADS ALL_CPUS -txe -72.6806747039285 -71.41272166174498 -tye 46.26391417288448 46.71285611583465 -tr 0.00001 0.00001
+```
