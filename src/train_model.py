@@ -29,11 +29,13 @@ with open(trainingFile) as f:
 
 	features = []
 	labels = []
+	coord = []
 	
 	for line in labeled_data:
 		line = [ float(h) for h in line]
-		features.append(line[:-1])
+		features.append(line[3:-1])
 		labels.append(int(line[-1]))
+		coord.append(line[:3])
 
 
 test_features = np.asarray(features[:200])
