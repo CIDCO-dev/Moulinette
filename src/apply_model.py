@@ -22,7 +22,7 @@ if model:
 		data = list(reader)
 		sys.stderr.write("[+] Loaded {} soundings\n".format(len(data)))
 
-		features = [x[3:-1] for x in data]
+		features = [x[3:] for x in data]
 
 		predictions = model.predict(features);
 
