@@ -17,12 +17,18 @@ model = pickle.load(open(modelFilename,"rb"))
 #Load training data
 if model:
 	with open(dataFilename,"r") as dataFile:
-		reader = csv.reader(dataFile, delimiter=" ")
+		reader = csv.reader(dataFile, delimiter=",")
 		#next(reader)
 		data = list(reader)
 		sys.stderr.write("[+] Loaded {} soundings\n".format(len(data)))
 
+		#print("data", data)
+		#features = []
 		features = [x[3:] for x in data]
+#		for line in data:
+#			print(line[3:])
+#			features.append(line[3:])
+		#print("features", features)
 
 		predictions = model.predict(features);
 
