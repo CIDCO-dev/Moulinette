@@ -106,8 +106,5 @@ int main(int argc, const char* argv[]) {
 	for(int i =0; i<lgfPoints.cols(); ++i){
 		std::cout<<lgfPoints(0, i)<<" "<<lgfPoints(1, i)<<" "<<groundTruths.at(i)<< std::endl;
 	}
-	
-	
-	
 	return 0;
 }
