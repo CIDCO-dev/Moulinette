@@ -2,14 +2,14 @@ import csv
 import numpy as np
 import pickle
 import sys
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import GridSearchCV
+#from sklearn.model_selection import GridSearchCV
 
 """
 training data format:
-x, y, z, hackel, gmm, groundTruth
+x, y, z, hackel, groundTruth
 
 """
 
