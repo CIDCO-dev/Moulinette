@@ -2,14 +2,14 @@ import csv
 import numpy as np
 import pickle
 import sys
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import GridSearchCV
+#from sklearn.model_selection import GridSearchCV
 
 """
 training data format:
-x, y, z, hackel, gmm, groundTruth
+x, y, z, hackel, groundTruth
 
 """
 
@@ -29,11 +29,13 @@ with open(trainingFile) as f:
 
 	features = []
 	labels = []
+	coord = []
 	
 	for line in labeled_data:
 		line = [ float(h) for h in line]
-		features.append(line[:-1])
+		features.append(line[3:-1])
 		labels.append(int(line[-1]))
+		coord.append(line[:3])
 
 
 test_features = np.asarray(features[:200])
